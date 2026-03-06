@@ -1,9 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.CaloriesCounter" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorOnPrimary">@color/app_surface</item>
+        <item name="colorPrimaryContainer">@color/app_primary_container</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="android:colorBackground">@color/app_background</item>
+        <item name="colorSurface">@color/app_surface</item>
+        <item name="android:windowBackground">@color/app_background</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.CaloriesCounter.HeadlineLarge</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.CaloriesCounter.BodyLarge</item>
     </style>
 
     <style name="Theme.CaloriesCounter" parent="Base.Theme.CaloriesCounter" />
+
+    <style name="TextAppearance.CaloriesCounter.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/manrope</item>
+    </style>
+
+    <style name="TextAppearance.CaloriesCounter.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/inter</item>
+    </style>
 </resources>

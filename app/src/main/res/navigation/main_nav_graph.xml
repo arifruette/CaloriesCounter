@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/diaryFragment">
+
+    <fragment
+        android:id="@+id/diaryFragment"
+        android:name="ru.ari.caloriescounter.feature.diary.presentation.DiaryFragment"
+        android:label="@string/tab_diary" />
+
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="ru.ari.caloriescounter.feature.stats.presentation.StatsFragment"
+        android:label="@string/tab_stats" />
+
+    <fragment
+        android:id="@+id/recipesFragment"
+        android:name="ru.ari.caloriescounter.feature.recipes.presentation.RecipesFragment"
+        android:label="@string/tab_recipes" />
+
+</navigation>

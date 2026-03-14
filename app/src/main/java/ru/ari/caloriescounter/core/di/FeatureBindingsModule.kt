@@ -6,9 +6,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import ru.ari.caloriescounter.feature.diary.data.DiaryRepositoryImpl
+import ru.ari.caloriescounter.feature.diary.data.ProductSearchRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.domain.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.DiaryInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.DiaryRepository
+import ru.ari.caloriescounter.feature.diary.domain.ProductSearchRepository
 import ru.ari.caloriescounter.feature.recipes.data.RecipesRepositoryImpl
 import ru.ari.caloriescounter.feature.recipes.domain.RecipesInteractor
 import ru.ari.caloriescounter.feature.recipes.domain.RecipesInteractorImpl
@@ -32,6 +34,10 @@ abstract class FeatureBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindProductSearchRepository(impl: ProductSearchRepositoryImpl): ProductSearchRepository
+
+    @Binds
+    @Singleton
     abstract fun bindRecipesRepository(impl: RecipesRepositoryImpl): RecipesRepository
 
     @Binds
@@ -46,3 +52,4 @@ abstract class FeatureBindingsModule {
     @Singleton
     abstract fun bindRecipesInteractor(impl: RecipesInteractorImpl): RecipesInteractor
 }
+

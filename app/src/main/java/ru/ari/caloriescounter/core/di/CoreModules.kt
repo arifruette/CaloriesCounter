@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import ru.ari.caloriescounter.core.database.AppDatabase
-import ru.ari.caloriescounter.core.network.ApiService
+import ru.ari.caloriescounter.feature.diary.data.remote.OpenFoodFactsApi
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -45,14 +45,15 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
         json: Json,
     ): Retrofit = Retrofit.Builder()
-        .baseUrl("https://example.com/")
+        .baseUrl("https://world.openfoodfacts.org/")
         .client(okHttpClient)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+    fun provideOpenFoodFactsApi(retrofit: Retrofit): OpenFoodFactsApi =
+        retrofit.create(OpenFoodFactsApi::class.java)
 }
 
 @Module
@@ -67,3 +68,4 @@ object DatabaseModule {
     @Provides
     fun provideCalorieEntryDao(database: AppDatabase) = database.calorieEntryDao()
 }
+

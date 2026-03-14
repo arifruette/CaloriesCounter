@@ -25,7 +25,7 @@ class StatsViewModel @Inject constructor(
 }
 
 data class StatsState(
-    val title: String = "Statistics",
+    val title: String = "РЎС‚Р°С‚РёСЃС‚РёРєР°",
 ) : UiState
 
 sealed interface StatsIntent : UiIntent {
@@ -35,3 +35,4 @@ sealed interface StatsIntent : UiIntent {
 sealed interface StatsEffect : UiEffect {
     data object Ready : StatsEffect
 }
+

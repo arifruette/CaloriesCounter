@@ -7,7 +7,12 @@
     <fragment
         android:id="@+id/diaryFragment"
         android:name="ru.ari.caloriescounter.feature.diary.presentation.DiaryFragment"
-        android:label="@string/tab_diary" />
+        android:label="@string/tab_diary">
+
+        <action
+            android:id="@+id/action_diaryFragment_to_mealProductsPlaceholderFragment"
+            app:destination="@id/mealProductsPlaceholderFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/statsFragment"
@@ -19,4 +24,14 @@
         android:name="ru.ari.caloriescounter.feature.recipes.presentation.RecipesFragment"
         android:label="@string/tab_recipes" />
 
+    <fragment
+        android:id="@+id/mealProductsPlaceholderFragment"
+        android:name="ru.ari.caloriescounter.feature.diary.presentation.MealProductsPlaceholderFragment"
+        android:label="@string/screen_diary">
+        <argument
+            android:name="mealType"
+            app:argType="string" />
+    </fragment>
+
 </navigation>
+

@@ -6,11 +6,10 @@
     android:padding="24dp">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/text_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/manrope"
-        android:text="@string/screen_recipes"
         android:textColor="@color/app_on_background"
         android:textSize="28sp"
         android:textFontWeight="600"
@@ -19,16 +18,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/text_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/inter"
-        android:text="@string/route_recipes"
+        android:text="@string/screen_meal_products_description"
         android:textColor="@color/app_on_surface_variant"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title" />
+        app:layout_constraintTop_toBottomOf="@id/text_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

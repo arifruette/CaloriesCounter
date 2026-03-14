@@ -25,7 +25,7 @@ class RecipesViewModel @Inject constructor(
 }
 
 data class RecipesState(
-    val title: String = "Recipes",
+    val title: String = "Р РµС†РµРїС‚С‹",
 ) : UiState
 
 sealed interface RecipesIntent : UiIntent {
@@ -35,3 +35,4 @@ sealed interface RecipesIntent : UiIntent {
 sealed interface RecipesEffect : UiEffect {
     data object Ready : RecipesEffect
 }
+

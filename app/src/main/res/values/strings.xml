@@ -8,13 +8,19 @@
     <string name="screen_diary">Дневник</string>
     <string name="screen_stats">Статистика</string>
     <string name="screen_recipes">Рецепты</string>
+    <string name="screen_meal_products">Добавление продуктов</string>
 
     <string name="diary_subtitle">Выберите прием пищи, чтобы добавить блюда.</string>
-    <string name="route_diary">Маршрут: дневник</string>
     <string name="route_stats">Маршрут: статистика</string>
     <string name="route_recipes">Маршрут: рецепты</string>
 
+    <string name="meal_breakfast">Завтрак</string>
+    <string name="meal_lunch">Обед</string>
+    <string name="meal_snack">Перекус</string>
+    <string name="meal_summary">%1$d ккал · Б %2$s Ж %3$s У %4$s · %5$d блюд</string>
+
     <string name="screen_meal_products_title">Добавление продуктов: %1$s</string>
     <string name="screen_meal_products_description">Здесь будет поиск по названию и штрихкоду, выбор порции и добавление в выбранный прием пищи.</string>
+    <string name="placeholder_loading">Загрузка...</string>
+    <string name="cd_back">Назад</string>
 </resources>
-

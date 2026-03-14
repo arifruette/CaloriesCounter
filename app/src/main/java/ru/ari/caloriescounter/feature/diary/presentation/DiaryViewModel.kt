@@ -1,9 +1,8 @@
 package ru.ari.caloriescounter.feature.diary.presentation
 
-import java.time.LocalDate
-import java.util.Locale
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -53,19 +52,18 @@ class DiaryViewModel @Inject constructor(
 
 data class DiaryState(
     val mealCards: List<MealCardUiModel> = MealType.entries.map { mealType ->
-        MealCardUiModel(
-            mealType = mealType,
-            title = mealType.toTitle(),
-            subtitle = "0 ккал · Б 0.0 Ж 0.0 У 0.0 · 0 блюд",
-        )
+        MealCardUiModel(mealType = mealType)
     },
     val isLoading: Boolean = true,
 ) : UiState
 
 data class MealCardUiModel(
     val mealType: MealType,
-    val title: String,
-    val subtitle: String,
+    val calories: Int = 0,
+    val protein: Double = 0.0,
+    val fat: Double = 0.0,
+    val carbs: Double = 0.0,
+    val entriesCount: Int = 0,
 )
 
 sealed interface DiaryIntent : UiIntent {
@@ -80,24 +78,13 @@ sealed interface DiaryEffect : UiEffect {
 private fun DayDiary.toMealCards(): List<MealCardUiModel> =
     MealType.entries.map { mealType ->
         val summary = mealSummaries[mealType]
-        val calories = summary?.totalCalories ?: 0.0
-        val protein = summary?.totalProtein ?: 0.0
-        val fat = summary?.totalFat ?: 0.0
-        val carbs = summary?.totalCarbs ?: 0.0
-        val entriesCount = summary?.entriesCount ?: 0
 
         MealCardUiModel(
             mealType = mealType,
-            title = mealType.toTitle(),
-            subtitle = "${calories.toInt()} ккал · Б ${protein.ruOneDecimal()} Ж ${fat.ruOneDecimal()} У ${carbs.ruOneDecimal()} · $entriesCount блюд",
+            calories = (summary?.totalCalories ?: 0.0).toInt(),
+            protein = summary?.totalProtein ?: 0.0,
+            fat = summary?.totalFat ?: 0.0,
+            carbs = summary?.totalCarbs ?: 0.0,
+            entriesCount = summary?.entriesCount ?: 0,
         )
     }
-
-private fun MealType.toTitle(): String = when (this) {
-    MealType.BREAKFAST -> "Завтрак"
-    MealType.LUNCH -> "Обед"
-    MealType.SNACK -> "Перекус"
-}
-
-private fun Double.ruOneDecimal(): String = String.format(Locale.forLanguageTag("ru-RU"), "%.1f", this)
-

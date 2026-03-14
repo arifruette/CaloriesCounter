@@ -1,4 +1,0 @@
-interface:
-  display_name: "Android Calories Counter"
-  short_description: "Compose-first workflow for CaloriesCounter"
-  default_prompt: "Use $android-calories-counter to implement, migrate, debug, or review Compose-first changes in the CaloriesCounter Android project."

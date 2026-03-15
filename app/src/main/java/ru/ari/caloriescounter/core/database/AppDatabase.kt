@@ -6,6 +6,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "calorie_entries")
@@ -21,10 +23,26 @@ interface CalorieEntryDao {
 }
 
 @Database(
-    entities = [CalorieEntryEntity::class],
-    version = 1,
+    entities = [CalorieEntryEntity::class, WeightProfileEntity::class],
+    version = 2,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun calorieEntryDao(): CalorieEntryDao
+    abstract fun weightProfileDao(): WeightProfileDao
+}
+
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS weight_profile (
+                id INTEGER NOT NULL,
+                currentWeightKg REAL NOT NULL,
+                targetWeightKg REAL NOT NULL,
+                PRIMARY KEY(id)
+            )
+            """.trimIndent(),
+        )
+    }
 }

@@ -7,10 +7,14 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import ru.ari.caloriescounter.feature.diary.data.DiaryRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.ProductSearchRepositoryImpl
+import ru.ari.caloriescounter.feature.diary.data.WeightProfileRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.domain.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.DiaryInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.DiaryRepository
 import ru.ari.caloriescounter.feature.diary.domain.ProductSearchRepository
+import ru.ari.caloriescounter.feature.diary.domain.WeightProfileInteractor
+import ru.ari.caloriescounter.feature.diary.domain.WeightProfileInteractorImpl
+import ru.ari.caloriescounter.feature.diary.domain.WeightProfileRepository
 import ru.ari.caloriescounter.feature.recipes.data.RecipesRepositoryImpl
 import ru.ari.caloriescounter.feature.recipes.domain.RecipesInteractor
 import ru.ari.caloriescounter.feature.recipes.domain.RecipesInteractorImpl
@@ -34,6 +38,10 @@ abstract class FeatureBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindWeightProfileRepository(impl: WeightProfileRepositoryImpl): WeightProfileRepository
+
+    @Binds
+    @Singleton
     abstract fun bindProductSearchRepository(impl: ProductSearchRepositoryImpl): ProductSearchRepository
 
     @Binds
@@ -47,6 +55,10 @@ abstract class FeatureBindingsModule {
     @Binds
     @Singleton
     abstract fun bindStatsInteractor(impl: StatsInteractorImpl): StatsInteractor
+
+    @Binds
+    @Singleton
+    abstract fun bindWeightProfileInteractor(impl: WeightProfileInteractorImpl): WeightProfileInteractor
 
     @Binds
     @Singleton

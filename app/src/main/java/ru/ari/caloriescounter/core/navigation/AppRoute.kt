@@ -14,4 +14,7 @@ sealed interface AppRoute {
 
     @Serializable
     data class MealProductsRoute(val mealType: String) : AppRoute
+
+    @Serializable
+    data object WeightGoalRoute : AppRoute
 }

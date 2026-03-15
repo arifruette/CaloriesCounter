@@ -23,4 +23,19 @@
     <string name="screen_meal_products_description">Здесь будет поиск по названию и штрихкоду, выбор порции и добавление в выбранный прием пищи.</string>
     <string name="placeholder_loading">Загрузка...</string>
     <string name="cd_back">Назад</string>
+    <string name="diary_weight_card_title">Вес</string>
+    <string name="diary_weight_card_target">Цель: %1$s кг</string>
+    <string name="weight_current_label">Текущий вес</string>
+    <string name="weight_target_label">Целевой вес</string>
+    <string name="weight_value">%1$s кг</string>
+    <string name="screen_weight_goal">Вес и цель</string>
+    <string name="weight_goal_encouragement">Шаг за шагом — вы на пути к цели.</string>
+    <string name="cd_decrease_current_weight">Уменьшить текущий вес</string>
+    <string name="cd_increase_current_weight">Увеличить текущий вес</string>
+    <string name="cd_decrease_target_weight">Уменьшить целевой вес</string>
+    <string name="cd_increase_target_weight">Увеличить целевой вес</string>
+    <string name="meal_products_selected_meal">Выбранный прием пищи</string>
+    <string name="meal_products_next_steps_title">Что будет здесь</string>
+    <string name="meal_products_next_steps_body">На этом экране появятся поиск продуктов, выбор порции, быстрый просмотр калорийности и добавление позиции в дневник без возврата назад.</string>
+    <string name="meal_products_hint_footer">Пока можно выбрать другой прием пищи на экране дневника или вернуться назад.</string>
 </resources>

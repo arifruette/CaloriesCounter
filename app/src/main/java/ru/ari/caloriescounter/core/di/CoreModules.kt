@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import ru.ari.caloriescounter.core.database.AppDatabase
+import ru.ari.caloriescounter.core.database.MIGRATION_1_2
 import ru.ari.caloriescounter.feature.diary.data.remote.OpenFoodFactsApi
 
 @Module
@@ -63,9 +64,14 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "calories-counter.db").build()
+        Room.databaseBuilder(context, AppDatabase::class.java, "calories-counter.db")
+            .addMigrations(MIGRATION_1_2)
+            .build()
 
     @Provides
     fun provideCalorieEntryDao(database: AppDatabase) = database.calorieEntryDao()
+
+    @Provides
+    fun provideWeightProfileDao(database: AppDatabase) = database.weightProfileDao()
 }
 

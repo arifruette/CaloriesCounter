@@ -33,6 +33,7 @@ import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.feature.diary.domain.model.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.DiaryRoute
 import ru.ari.caloriescounter.feature.diary.presentation.MealProductsPlaceholderScreen
+import ru.ari.caloriescounter.feature.diary.presentation.WeightGoalRoute
 import ru.ari.caloriescounter.feature.recipes.presentation.RecipesRoute
 import ru.ari.caloriescounter.feature.stats.presentation.StatsRoute
 
@@ -54,7 +55,8 @@ fun CaloriesCounterRoot() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val showBottomBar = currentDestination?.hierarchy?.none {
-        it.hasRoute(AppRoute.MealProductsRoute::class)
+        it.hasRoute(AppRoute.MealProductsRoute::class) ||
+            it.hasRoute(AppRoute.WeightGoalRoute::class)
     } != false
 
     Scaffold(
@@ -131,6 +133,9 @@ private fun CaloriesCounterNavHost(
                 onNavigateToMealProducts = { mealType ->
                     navController.navigate(AppRoute.MealProductsRoute(mealType.name))
                 },
+                onNavigateToWeightGoal = {
+                    navController.navigate(AppRoute.WeightGoalRoute)
+                },
             )
         }
         composable<AppRoute.StatsRoute> {
@@ -143,6 +148,12 @@ private fun CaloriesCounterNavHost(
             val route = backStackEntry.toRoute<AppRoute.MealProductsRoute>()
             MealProductsPlaceholderScreen(
                 mealType = route.mealType.toMealTypeOrDefault(),
+                contentPadding = contentPadding,
+                onBackClick = { navController.popBackStack() },
+            )
+        }
+        composable<AppRoute.WeightGoalRoute> {
+            WeightGoalRoute(
                 contentPadding = contentPadding,
                 onBackClick = { navController.popBackStack() },
             )

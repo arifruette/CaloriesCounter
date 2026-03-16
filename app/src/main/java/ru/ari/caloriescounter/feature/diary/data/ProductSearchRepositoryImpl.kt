@@ -1,11 +1,12 @@
 package ru.ari.caloriescounter.feature.diary.data
 
 import javax.inject.Inject
-import ru.ari.caloriescounter.feature.diary.data.remote.OpenFoodFactsApi
+import ru.ari.caloriescounter.feature.diary.data.remote.api.OpenFoodFactsApi
+import ru.ari.caloriescounter.feature.diary.data.remote.dto.OpenFoodFactsProductDto
 import ru.ari.caloriescounter.feature.diary.domain.ProductSearchRepository
-import ru.ari.caloriescounter.feature.diary.domain.model.NutritionPer100g
-import ru.ari.caloriescounter.feature.diary.domain.model.ProductCandidate
-import ru.ari.caloriescounter.feature.diary.domain.model.ProductSource
+import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionPer100g
+import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductCandidate
+import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductSource
 
 class ProductSearchRepositoryImpl @Inject constructor(
     private val api: OpenFoodFactsApi,
@@ -21,7 +22,7 @@ class ProductSearchRepositoryImpl @Inject constructor(
             api.productByBarcode(barcode).product?.let(::mapToCandidate)
         }.getOrNull()
 
-    private fun mapToCandidate(product: ru.ari.caloriescounter.feature.diary.data.remote.OpenFoodFactsProductDto): ProductCandidate? {
+    private fun mapToCandidate(product: OpenFoodFactsProductDto): ProductCandidate? {
         val name = product.productNameRu ?: product.productName ?: return null
         val nutriments = product.nutriments ?: return null
         return ProductCandidate(

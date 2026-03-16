@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import ru.ari.caloriescounter.core.common.mvi.contracts.UiEffect
+import ru.ari.caloriescounter.core.common.mvi.contracts.UiIntent
+import ru.ari.caloriescounter.core.common.mvi.contracts.UiState
 
 abstract class BaseMviViewModel<Intent : UiIntent, State : UiState, Effect : UiEffect>(
     initialState: State,

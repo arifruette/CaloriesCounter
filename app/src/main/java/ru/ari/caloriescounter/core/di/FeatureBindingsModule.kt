@@ -8,21 +8,21 @@ import javax.inject.Singleton
 import ru.ari.caloriescounter.feature.diary.data.DiaryRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.ProductSearchRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.WeightProfileRepositoryImpl
-import ru.ari.caloriescounter.feature.diary.domain.DiaryInteractor
-import ru.ari.caloriescounter.feature.diary.domain.DiaryInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.DiaryRepository
 import ru.ari.caloriescounter.feature.diary.domain.ProductSearchRepository
-import ru.ari.caloriescounter.feature.diary.domain.WeightProfileInteractor
-import ru.ari.caloriescounter.feature.diary.domain.WeightProfileInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.WeightProfileRepository
+import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractorImpl
+import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractorImpl
 import ru.ari.caloriescounter.feature.recipes.data.RecipesRepositoryImpl
-import ru.ari.caloriescounter.feature.recipes.domain.RecipesInteractor
-import ru.ari.caloriescounter.feature.recipes.domain.RecipesInteractorImpl
 import ru.ari.caloriescounter.feature.recipes.domain.RecipesRepository
+import ru.ari.caloriescounter.feature.recipes.domain.interactor.RecipesInteractor
+import ru.ari.caloriescounter.feature.recipes.domain.interactor.RecipesInteractorImpl
 import ru.ari.caloriescounter.feature.stats.data.StatsRepositoryImpl
-import ru.ari.caloriescounter.feature.stats.domain.StatsInteractor
-import ru.ari.caloriescounter.feature.stats.domain.StatsInteractorImpl
 import ru.ari.caloriescounter.feature.stats.domain.StatsRepository
+import ru.ari.caloriescounter.feature.stats.domain.interactor.StatsInteractor
+import ru.ari.caloriescounter.feature.stats.domain.interactor.StatsInteractorImpl
 
 @Module
 @InstallIn(SingletonComponent::class)

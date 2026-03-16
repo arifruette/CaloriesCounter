@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.ari.caloriescounter.R
+import ru.ari.caloriescounter.feature.stats.presentation.viewmodel.StatsViewModel
+import ru.ari.caloriescounter.feature.stats.presentation.viewmodel.contract.StatsIntent
 
 @Composable
 fun StatsRoute(

@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import ru.ari.caloriescounter.feature.diary.domain.DiaryRepository
-import ru.ari.caloriescounter.feature.diary.domain.model.DayDiary
-import ru.ari.caloriescounter.feature.diary.domain.model.DiaryEntry
-import ru.ari.caloriescounter.feature.diary.domain.model.MealSummary
-import ru.ari.caloriescounter.feature.diary.domain.model.MealType
+import ru.ari.caloriescounter.feature.diary.domain.model.diary.DayDiary
+import ru.ari.caloriescounter.feature.diary.domain.model.diary.DiaryEntry
+import ru.ari.caloriescounter.feature.diary.domain.model.diary.MealSummary
+import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 
 @Singleton
 class DiaryRepositoryImpl @Inject constructor() : DiaryRepository {
@@ -56,4 +56,3 @@ class DiaryRepositoryImpl @Inject constructor() : DiaryRepository {
         entries.value = entries.value.filterNot { it.id == entryId }
     }
 }
-

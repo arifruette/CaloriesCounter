@@ -30,10 +30,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import ru.ari.caloriescounter.R
-import ru.ari.caloriescounter.feature.diary.domain.model.MealType
-import ru.ari.caloriescounter.feature.diary.presentation.DiaryRoute
-import ru.ari.caloriescounter.feature.diary.presentation.MealProductsPlaceholderScreen
-import ru.ari.caloriescounter.feature.diary.presentation.WeightGoalRoute
+import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
+import ru.ari.caloriescounter.feature.diary.presentation.diary.DiaryRoute
+import ru.ari.caloriescounter.feature.diary.presentation.meal.MealProductsPlaceholderScreen
+import ru.ari.caloriescounter.feature.diary.presentation.weight.WeightGoalRoute
 import ru.ari.caloriescounter.feature.recipes.presentation.RecipesRoute
 import ru.ari.caloriescounter.feature.stats.presentation.StatsRoute
 

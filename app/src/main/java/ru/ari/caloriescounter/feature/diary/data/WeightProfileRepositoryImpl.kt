@@ -4,10 +4,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.ari.caloriescounter.core.database.WeightProfileDao
-import ru.ari.caloriescounter.core.database.WeightProfileEntity
+import ru.ari.caloriescounter.core.database.dao.WeightProfileDao
+import ru.ari.caloriescounter.core.database.entity.WeightProfileEntity
 import ru.ari.caloriescounter.feature.diary.domain.WeightProfileRepository
-import ru.ari.caloriescounter.feature.diary.domain.model.WeightProfile
+import ru.ari.caloriescounter.feature.diary.domain.model.weight.WeightProfile
 import kotlin.math.round
 
 @Singleton

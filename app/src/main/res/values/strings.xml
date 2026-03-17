@@ -16,6 +16,7 @@
 
     <string name="meal_breakfast">Завтрак</string>
     <string name="meal_lunch">Обед</string>
+    <string name="meal_dinner">Ужин</string>
     <string name="meal_snack">Перекус</string>
     <string name="meal_summary">%1$d ккал · Б %2$s Ж %3$s У %4$s · %5$d блюд</string>
 

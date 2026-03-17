@@ -37,7 +37,7 @@
     <string name="cd_increase_target_weight">Увеличить целевой вес</string>
     <string name="meal_products_selected_meal">Выбранный прием пищи</string>
     <string name="meal_products_next_steps_title">Что будет здесь</string>
-    <string name="meal_products_next_steps_body">На этом экране появятся поиск продуктов, выбор порции, быстрый просмотр калорийности и добавление позиции в дневник без возврата назад.</string>
+    <string name="meal_products_next_steps_body">На этом экране появляется поиск продуктов, выбор порции, быстрый просмотр калорийности и добавление позиции в дневник без возврата назад.</string>
     <string name="meal_products_hint_footer">Пока можно выбрать другой прием пищи на экране дневника или вернуться назад.</string>
 
     <string name="meal_products_add_fab">Добавить продукт</string>
@@ -65,5 +65,13 @@
     <string name="meal_products_grams_error">Введите корректное значение больше 0</string>
     <string name="meal_products_add_action">Добавить в прием пищи</string>
     <string name="meal_products_deleted">Продукт удален</string>
+    <string name="diary_nutrition_progress_title">Прогресс за сегодня</string>
+    <string name="diary_nutrition_progress_edit">Изменить цели</string>
+    <string name="diary_nutrition_progress_kcal">%1$d / %2$d ккал</string>
+    <string name="diary_nutrition_progress_grams">%1$s / %2$s г</string>
+    <string name="screen_nutrition_goals">Цели КБЖУ</string>
+    <string name="nutrition_goals_subtitle">Задайте дневные цели для калорий и макронутриентов.</string>
+    <string name="nutrition_goals_error">Введите значение больше 0</string>
+    <string name="nutrition_goals_save">Сохранить</string>
     <string name="action_undo">Отменить</string>
 </resources>

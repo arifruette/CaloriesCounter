@@ -6,13 +6,17 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import ru.ari.caloriescounter.feature.diary.data.DiaryRepositoryImpl
+import ru.ari.caloriescounter.feature.diary.data.NutritionGoalsRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.ProductSearchRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.WeightProfileRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.domain.DiaryRepository
+import ru.ari.caloriescounter.feature.diary.domain.NutritionGoalsRepository
 import ru.ari.caloriescounter.feature.diary.domain.ProductSearchRepository
 import ru.ari.caloriescounter.feature.diary.domain.WeightProfileRepository
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractorImpl
+import ru.ari.caloriescounter.feature.diary.domain.interactor.NutritionGoalsInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.NutritionGoalsInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
@@ -44,6 +48,10 @@ abstract class FeatureBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindNutritionGoalsRepository(impl: NutritionGoalsRepositoryImpl): NutritionGoalsRepository
+
+    @Binds
+    @Singleton
     abstract fun bindProductSearchRepository(impl: ProductSearchRepositoryImpl): ProductSearchRepository
 
     @Binds
@@ -61,6 +69,10 @@ abstract class FeatureBindingsModule {
     @Binds
     @Singleton
     abstract fun bindWeightProfileInteractor(impl: WeightProfileInteractorImpl): WeightProfileInteractor
+
+    @Binds
+    @Singleton
+    abstract fun bindNutritionGoalsInteractor(impl: NutritionGoalsInteractorImpl): NutritionGoalsInteractor
 
     @Binds
     @Singleton

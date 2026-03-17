@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.diary.components.DiaryHeader
 import ru.ari.caloriescounter.feature.diary.presentation.diary.components.MealCard
+import ru.ari.caloriescounter.feature.diary.presentation.diary.components.NutritionProgressCard
 import ru.ari.caloriescounter.feature.diary.presentation.diary.components.WeightCard
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contract.DiaryState
 
@@ -29,6 +30,7 @@ fun DiaryScreen(
     onDecreaseCurrentWeightFast: () -> Unit,
     onIncreaseCurrentWeightFast: () -> Unit,
     onWeightCardClick: () -> Unit,
+    onNutritionGoalsClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -51,6 +53,12 @@ fun DiaryScreen(
                 onDecreaseCurrentWeightFast = onDecreaseCurrentWeightFast,
                 onIncreaseCurrentWeightFast = onIncreaseCurrentWeightFast,
                 onClick = onWeightCardClick,
+            )
+        }
+        item {
+            NutritionProgressCard(
+                card = state.nutritionProgressCard,
+                onEditGoalsClick = onNutritionGoalsClick,
             )
         }
         if (state.isLoading) {

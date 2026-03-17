@@ -36,6 +36,7 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.MealProductsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.details.ProductDetailsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.ProductSearchRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchItemUiModel
+import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.NutritionGoalsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.weight.WeightGoalRoute
 import ru.ari.caloriescounter.feature.recipes.presentation.RecipesRoute
 import ru.ari.caloriescounter.feature.stats.presentation.StatsRoute
@@ -61,7 +62,8 @@ fun CaloriesCounterRoot() {
         it.hasRoute(AppRoute.MealProductsRoute::class) ||
             it.hasRoute(AppRoute.MealProductSearchRoute::class) ||
             it.hasRoute(AppRoute.MealProductDetailsRoute::class) ||
-            it.hasRoute(AppRoute.WeightGoalRoute::class)
+            it.hasRoute(AppRoute.WeightGoalRoute::class) ||
+            it.hasRoute(AppRoute.NutritionGoalsRoute::class)
     } != false
 
     Scaffold(
@@ -141,6 +143,9 @@ private fun CaloriesCounterNavHost(
                 onNavigateToWeightGoal = {
                     navController.navigate(AppRoute.WeightGoalRoute)
                 },
+                onNavigateToNutritionGoals = {
+                    navController.navigate(AppRoute.NutritionGoalsRoute)
+                },
             )
         }
         composable<AppRoute.StatsRoute> {
@@ -182,6 +187,12 @@ private fun CaloriesCounterNavHost(
         }
         composable<AppRoute.WeightGoalRoute> {
             WeightGoalRoute(
+                contentPadding = contentPadding,
+                onBackClick = { navController.popBackStack() },
+            )
+        }
+        composable<AppRoute.NutritionGoalsRoute> {
+            NutritionGoalsRoute(
                 contentPadding = contentPadding,
                 onBackClick = { navController.popBackStack() },
             )

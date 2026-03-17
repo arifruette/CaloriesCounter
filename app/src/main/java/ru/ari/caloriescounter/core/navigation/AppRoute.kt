@@ -33,4 +33,7 @@ sealed interface AppRoute {
 
     @Serializable
     data object WeightGoalRoute : AppRoute
+
+    @Serializable
+    data object NutritionGoalsRoute : AppRoute
 }

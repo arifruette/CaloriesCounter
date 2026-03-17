@@ -6,4 +6,5 @@ import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 sealed interface DiaryEffect : UiEffect {
     data class NavigateToMealProducts(val mealType: MealType) : DiaryEffect
     data object NavigateToWeightGoal : DiaryEffect
+    data object NavigateToNutritionGoals : DiaryEffect
 }

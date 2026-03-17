@@ -10,31 +10,48 @@ import kotlinx.coroutines.launch
 import ru.ari.caloriescounter.core.common.mvi.BaseMviViewModel
 import ru.ari.caloriescounter.core.common.time.MoscowDateTimeProvider
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.NutritionGoalsInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.diary.DayDiary
 import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
+import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionGoals
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contract.DiaryEffect
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contract.DiaryIntent
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contract.DiaryState
+import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.DiaryMacroProgressUiModel
+import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.DiaryNutritionProgressCardUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.MealCardUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.WeightCardUiModel
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
     private val interactor: DiaryInteractor,
+    private val nutritionGoalsInteractor: NutritionGoalsInteractor,
     private val weightProfileInteractor: WeightProfileInteractor,
     private val moscowDateTimeProvider: MoscowDateTimeProvider,
 ) : BaseMviViewModel<DiaryIntent, DiaryState, DiaryEffect>(DiaryState()) {
 
     private var observeDiaryJob: Job? = null
+    private var observeGoalsJob: Job? = null
     private var observeWeightJob: Job? = null
     private var midnightUpdateJob: Job? = null
     private var observedDate = moscowDateTimeProvider.currentDate()
+    private var latestDayDiary = DayDiary(
+        date = observedDate,
+        entries = emptyList(),
+        mealSummaries = emptyMap(),
+        totalCalories = 0.0,
+        totalProtein = 0.0,
+        totalFat = 0.0,
+        totalCarbs = 0.0,
+    )
+    private var latestGoals = defaultNutritionGoals
 
     override fun onIntent(intent: DiaryIntent) {
         when (intent) {
             DiaryIntent.ScreenOpened -> {
                 observeDiary()
+                observeNutritionGoals()
                 observeWeightProfile()
                 scheduleMidnightDateSwitch()
             }
@@ -44,6 +61,7 @@ class DiaryViewModel @Inject constructor(
             DiaryIntent.DecreaseCurrentWeightFast -> updateCurrentWeight(-WEIGHT_LONG_PRESS_STEP_KG)
             DiaryIntent.IncreaseCurrentWeightFast -> updateCurrentWeight(WEIGHT_LONG_PRESS_STEP_KG)
             DiaryIntent.WeightCardClicked -> navigateToWeightGoal()
+            DiaryIntent.NutritionGoalsClicked -> navigateToNutritionGoals()
         }
     }
 
@@ -52,10 +70,33 @@ class DiaryViewModel @Inject constructor(
 
         observeDiaryJob = viewModelScope.launch {
             interactor.observeDiary(observedDate).collect { dayDiary ->
+                latestDayDiary = dayDiary
                 updateState {
                     copy(
+                        nutritionProgressCard = buildNutritionProgressCard(
+                            dayDiary = latestDayDiary,
+                            goals = latestGoals,
+                        ),
                         mealCards = dayDiary.toMealCards(),
                         isLoading = false,
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observeNutritionGoals() {
+        if (observeGoalsJob != null) return
+
+        observeGoalsJob = viewModelScope.launch {
+            nutritionGoalsInteractor.observeGoals().collect { goals ->
+                latestGoals = goals
+                updateState {
+                    copy(
+                        nutritionProgressCard = buildNutritionProgressCard(
+                            dayDiary = latestDayDiary,
+                            goals = latestGoals,
+                        ),
                     )
                 }
             }
@@ -98,6 +139,12 @@ class DiaryViewModel @Inject constructor(
         }
     }
 
+    private fun navigateToNutritionGoals() {
+        viewModelScope.launch {
+            emitEffect(DiaryEffect.NavigateToNutritionGoals)
+        }
+    }
+
     private fun scheduleMidnightDateSwitch() {
         if (midnightUpdateJob != null) return
 
@@ -117,6 +164,13 @@ class DiaryViewModel @Inject constructor(
 private const val WEIGHT_STEP_KG = 0.1
 private const val WEIGHT_LONG_PRESS_STEP_KG = 1.0
 
+private val defaultNutritionGoals = NutritionGoals(
+    calories = 2000,
+    protein = 100.0,
+    fat = 70.0,
+    carbs = 250.0,
+)
+
 private fun DayDiary.toMealCards(): List<MealCardUiModel> =
     MealType.entries.map { mealType ->
         val summary = mealSummaries[mealType]
@@ -130,3 +184,26 @@ private fun DayDiary.toMealCards(): List<MealCardUiModel> =
             entriesCount = summary?.entriesCount ?: 0,
         )
     }
+
+private fun buildNutritionProgressCard(
+    dayDiary: DayDiary,
+    goals: NutritionGoals,
+): DiaryNutritionProgressCardUiModel =
+    DiaryNutritionProgressCardUiModel(
+        calories = DiaryMacroProgressUiModel(
+            current = dayDiary.totalCalories,
+            goal = goals.calories.toDouble(),
+        ),
+        protein = DiaryMacroProgressUiModel(
+            current = dayDiary.totalProtein,
+            goal = goals.protein,
+        ),
+        fat = DiaryMacroProgressUiModel(
+            current = dayDiary.totalFat,
+            goal = goals.fat,
+        ),
+        carbs = DiaryMacroProgressUiModel(
+            current = dayDiary.totalCarbs,
+            goal = goals.carbs,
+        ),
+    )

@@ -9,10 +9,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import ru.ari.caloriescounter.core.database.AppDatabase
+import ru.ari.caloriescounter.core.database.dao.CalorieEntryDao
+import ru.ari.caloriescounter.core.database.dao.NutritionGoalsDao
+import ru.ari.caloriescounter.core.database.dao.WeightProfileDao
 import ru.ari.caloriescounter.core.database.migration.migration1To2
 import ru.ari.caloriescounter.core.database.migration.migration2To3
-import ru.ari.caloriescounter.core.database.dao.CalorieEntryDao
-import ru.ari.caloriescounter.core.database.dao.WeightProfileDao
+import ru.ari.caloriescounter.core.database.migration.migration3To4
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -24,6 +26,7 @@ object DatabaseModule {
         Room.databaseBuilder(context, AppDatabase::class.java, "calories-counter.db")
             .addMigrations(migration1To2)
             .addMigrations(migration2To3)
+            .addMigrations(migration3To4)
             .build()
 
     @Provides
@@ -31,4 +34,7 @@ object DatabaseModule {
 
     @Provides
     fun provideWeightProfileDao(database: AppDatabase): WeightProfileDao = database.weightProfileDao()
+
+    @Provides
+    fun provideNutritionGoalsDao(database: AppDatabase): NutritionGoalsDao = database.nutritionGoalsDao()
 }

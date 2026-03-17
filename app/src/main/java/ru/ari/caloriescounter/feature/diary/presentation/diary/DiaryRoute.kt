@@ -16,6 +16,7 @@ fun DiaryRoute(
     contentPadding: PaddingValues,
     onNavigateToMealProducts: (MealType) -> Unit,
     onNavigateToWeightGoal: () -> Unit,
+    onNavigateToNutritionGoals: () -> Unit,
     viewModel: DiaryViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -29,6 +30,7 @@ fun DiaryRoute(
             when (effect) {
                 is DiaryEffect.NavigateToMealProducts -> onNavigateToMealProducts(effect.mealType)
                 DiaryEffect.NavigateToWeightGoal -> onNavigateToWeightGoal()
+                DiaryEffect.NavigateToNutritionGoals -> onNavigateToNutritionGoals()
             }
         }
     }
@@ -42,5 +44,6 @@ fun DiaryRoute(
         onDecreaseCurrentWeightFast = { viewModel.onIntent(DiaryIntent.DecreaseCurrentWeightFast) },
         onIncreaseCurrentWeightFast = { viewModel.onIntent(DiaryIntent.IncreaseCurrentWeightFast) },
         onWeightCardClick = { viewModel.onIntent(DiaryIntent.WeightCardClicked) },
+        onNutritionGoalsClick = { viewModel.onIntent(DiaryIntent.NutritionGoalsClicked) },
     )
 }

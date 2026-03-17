@@ -1,20 +1,29 @@
 package ru.ari.caloriescounter.feature.diary.presentation.meal.search
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +34,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -95,9 +108,11 @@ fun ProductSearchScreen(
             )
 
             when {
-                state.isLoading -> CircularProgressIndicator()
+                state.isLoading -> ProductSearchShimmerList()
                 state.hasError -> Text(
-                    text = stringResource(R.string.meal_products_search_error),
+                    text = stringResource(
+                        id = state.errorMessageResId ?: R.string.meal_products_search_error,
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -124,6 +139,71 @@ fun ProductSearchScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ProductSearchShimmerList() {
+    val shimmerBrush = subtleShimmerBrush()
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(12) {
+            ProductSearchShimmerCard(shimmerBrush = shimmerBrush)
+        }
+    }
+}
+
+@Composable
+private fun subtleShimmerBrush(): Brush {
+    val baseColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    val highlightColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.78f)
+    val transition = rememberInfiniteTransition(label = "search_shimmer_transition")
+    val translateAnim by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 700f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "search_shimmer_translate",
+    )
+
+    return Brush.linearGradient(
+        colors = listOf(baseColor, highlightColor, baseColor),
+        start = Offset(x = translateAnim - 280f, y = 0f),
+        end = Offset(x = translateAnim, y = 260f),
+    )
+}
+
+@Composable
+private fun ProductSearchShimmerCard(shimmerBrush: Brush) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.62f)
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(shimmerBrush),
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.86f)
+                    .height(14.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(shimmerBrush),
+            )
         }
     }
 }

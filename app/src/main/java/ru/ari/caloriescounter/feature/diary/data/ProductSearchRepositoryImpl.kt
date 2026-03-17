@@ -1,5 +1,6 @@
 package ru.ari.caloriescounter.feature.diary.data
 
+import android.util.Log
 import javax.inject.Inject
 import ru.ari.caloriescounter.feature.diary.data.remote.api.OpenFoodFactsApi
 import ru.ari.caloriescounter.feature.diary.data.remote.dto.OpenFoodFactsProductDto
@@ -13,9 +14,12 @@ class ProductSearchRepositoryImpl @Inject constructor(
 ) : ProductSearchRepository {
 
     override suspend fun searchByName(query: String): List<ProductCandidate> =
-        runCatching {
+        try {
             api.searchByName(query).products.mapNotNull(::mapToCandidate)
-        }.getOrDefault(emptyList())
+        } catch (error: Exception) {
+            Log.e(TAG, "searchByName failed for query='$query'", error)
+            throw error
+        }
 
     override suspend fun searchByBarcode(barcode: String): ProductCandidate? =
         runCatching {
@@ -40,3 +44,4 @@ class ProductSearchRepositoryImpl @Inject constructor(
     }
 }
 
+private const val TAG = "ProductSearchRepository"

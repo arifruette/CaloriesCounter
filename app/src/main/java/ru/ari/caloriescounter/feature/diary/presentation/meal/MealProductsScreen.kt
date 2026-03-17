@@ -21,6 +21,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,6 +43,7 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel.contract
 fun MealProductsScreen(
     state: MealProductsState,
     contentPadding: PaddingValues,
+    snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onDeleteEntryClick: (Long) -> Unit,
     onAddProductClick: () -> Unit,
@@ -68,6 +72,17 @@ fun MealProductsScreen(
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = stringResource(R.string.meal_products_add_fab),
+                )
+            }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    actionColor = MaterialTheme.colorScheme.primary,
+                    shape = MaterialTheme.shapes.medium,
                 )
             }
         },
@@ -126,27 +141,87 @@ private fun MealSummaryCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
                 text = stringResource(R.string.meal_products_kbju_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                MealMetricCell(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(R.string.meal_products_metric_calories),
+                    value = stringResource(
+                        R.string.meal_products_metric_kcal_value,
+                        totalCalories,
+                    ),
+                )
+                MealMetricCell(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(R.string.meal_products_metric_protein),
+                    value = stringResource(
+                        R.string.meal_products_metric_grams_value,
+                        totalProtein.formatRuDecimal(),
+                    ),
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                MealMetricCell(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(R.string.meal_products_metric_fat),
+                    value = stringResource(
+                        R.string.meal_products_metric_grams_value,
+                        totalFat.formatRuDecimal(),
+                    ),
+                )
+                MealMetricCell(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(R.string.meal_products_metric_carbs),
+                    value = stringResource(
+                        R.string.meal_products_metric_grams_value,
+                        totalCarbs.formatRuDecimal(),
+                    ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MealMetricCell(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+        ),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             Text(
-                text = totalCalories.toString(),
-                style = MaterialTheme.typography.displaySmall,
-                color = MaterialTheme.colorScheme.primary,
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f),
             )
             Text(
-                text = stringResource(
-                    R.string.meal_products_macros,
-                    totalProtein.formatRuDecimal(),
-                    totalFat.formatRuDecimal(),
-                    totalCarbs.formatRuDecimal(),
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = value,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
     }

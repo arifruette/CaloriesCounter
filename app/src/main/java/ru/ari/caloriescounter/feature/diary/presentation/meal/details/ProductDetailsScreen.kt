@@ -3,6 +3,7 @@ package ru.ari.caloriescounter.feature.diary.presentation.meal.details
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -100,6 +101,61 @@ fun ProductDetailsScreen(
                 }
             }
 
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                shape = MaterialTheme.shapes.large,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        MacroMetricCell(
+                            modifier = Modifier.weight(1f),
+                            label = stringResource(R.string.meal_products_metric_calories),
+                            value = stringResource(
+                                R.string.meal_products_metric_kcal_value,
+                                state.calculatedCalories,
+                            ),
+                        )
+                        MacroMetricCell(
+                            modifier = Modifier.weight(1f),
+                            label = stringResource(R.string.meal_products_metric_protein),
+                            value = stringResource(
+                                R.string.meal_products_metric_grams_value,
+                                state.calculatedProtein.formatRuDecimal(),
+                            ),
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        MacroMetricCell(
+                            modifier = Modifier.weight(1f),
+                            label = stringResource(R.string.meal_products_metric_fat),
+                            value = stringResource(
+                                R.string.meal_products_metric_grams_value,
+                                state.calculatedFat.formatRuDecimal(),
+                            ),
+                        )
+                        MacroMetricCell(
+                            modifier = Modifier.weight(1f),
+                            label = stringResource(R.string.meal_products_metric_carbs),
+                            value = stringResource(
+                                R.string.meal_products_metric_grams_value,
+                                state.calculatedCarbs.formatRuDecimal(),
+                            ),
+                        )
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = state.gramsInput,
                 onValueChange = onGramsChanged,
@@ -115,40 +171,45 @@ fun ProductDetailsScreen(
                 singleLine = true,
             )
 
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-                shape = MaterialTheme.shapes.large,
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Text(
-                        text = state.calculatedCalories.toString(),
-                        style = MaterialTheme.typography.displaySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
-                    Text(
-                        text = stringResource(
-                            R.string.meal_products_macros,
-                            state.calculatedProtein.formatRuDecimal(),
-                            state.calculatedFat.formatRuDecimal(),
-                            state.calculatedCarbs.formatRuDecimal(),
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
-                }
-            }
-
             Button(
                 onClick = onAddClick,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = stringResource(R.string.meal_products_add_action))
             }
+        }
+    }
+}
+
+@Composable
+private fun MacroMetricCell(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+        ),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f),
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
         }
     }
 }

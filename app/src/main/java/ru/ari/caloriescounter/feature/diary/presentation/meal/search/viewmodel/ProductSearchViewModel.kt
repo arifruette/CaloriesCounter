@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import java.net.SocketTimeoutException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.core.common.mvi.BaseMviViewModel
 import ru.ari.caloriescounter.core.navigation.AppRoute
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractor
@@ -36,12 +38,12 @@ class ProductSearchViewModel @Inject constructor(
     }
 
     private fun onQueryChanged(query: String) {
-        updateState { copy(query = query, hasError = false) }
+        updateState { copy(query = query, hasError = false, errorMessageResId = null) }
         val normalizedQuery = query.trim()
 
         debounceSearchJob?.cancel()
         if (normalizedQuery.isBlank()) {
-            updateState { copy(results = emptyList(), isLoading = false, hasError = false) }
+            updateState { copy(results = emptyList(), isLoading = false, hasError = false, errorMessageResId = null) }
             return
         }
 
@@ -53,19 +55,20 @@ class ProductSearchViewModel @Inject constructor(
 
     private fun submitSearch(query: String) {
         if (query.isBlank()) {
-            updateState { copy(results = emptyList(), isLoading = false, hasError = false) }
+            updateState { copy(results = emptyList(), isLoading = false, hasError = false, errorMessageResId = null) }
             return
         }
 
         debounceSearchJob?.cancel()
         viewModelScope.launch {
-            updateState { copy(isLoading = true, hasError = false) }
+            updateState { copy(isLoading = true, hasError = false, errorMessageResId = null) }
             val result = runCatching { productSearchInteractor.searchByName(query) }
             result.onSuccess { products ->
                 updateState {
                     copy(
                         isLoading = false,
                         hasError = false,
+                        errorMessageResId = null,
                         results = products.map { product ->
                             ProductSearchItemUiModel(
                                 source = product.source,
@@ -80,12 +83,17 @@ class ProductSearchViewModel @Inject constructor(
                         },
                     )
                 }
-            }.onFailure {
+            }.onFailure { error ->
                 updateState {
                     copy(
                         isLoading = false,
                         results = emptyList(),
                         hasError = true,
+                        errorMessageResId = if (error is SocketTimeoutException) {
+                            R.string.meal_products_search_timeout
+                        } else {
+                            R.string.meal_products_search_error
+                        },
                     )
                 }
             }

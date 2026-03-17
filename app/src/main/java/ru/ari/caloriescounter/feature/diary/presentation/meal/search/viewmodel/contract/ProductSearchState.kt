@@ -8,4 +8,5 @@ data class ProductSearchState(
     val isLoading: Boolean = false,
     val results: List<ProductSearchItemUiModel> = emptyList(),
     val hasError: Boolean = false,
+    val errorMessageResId: Int? = null,
 ) : UiState

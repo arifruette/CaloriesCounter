@@ -52,9 +52,18 @@
     <string name="meal_products_search_initial">Введите хотя бы один символ, чтобы начать поиск.</string>
     <string name="meal_products_search_empty">По вашему запросу ничего не найдено.</string>
     <string name="meal_products_search_error">Не удалось загрузить результаты поиска.</string>
+    <string name="meal_products_search_timeout">Сервер отвечает слишком долго. Проверьте интернет и повторите поиск.</string>
     <string name="meal_products_search_result_summary">%1$d ккал/100г · Б %2$s Ж %3$s У %4$s</string>
     <string name="meal_products_details_title">Детали продукта</string>
+    <string name="meal_products_metric_calories">Калории</string>
+    <string name="meal_products_metric_protein">Белки</string>
+    <string name="meal_products_metric_fat">Жиры</string>
+    <string name="meal_products_metric_carbs">Углеводы</string>
+    <string name="meal_products_metric_kcal_value">%1$d ккал</string>
+    <string name="meal_products_metric_grams_value">%1$s г</string>
     <string name="meal_products_grams_label">Порция (граммы)</string>
     <string name="meal_products_grams_error">Введите корректное значение больше 0</string>
     <string name="meal_products_add_action">Добавить в прием пищи</string>
+    <string name="meal_products_deleted">Продукт удален</string>
+    <string name="action_undo">Отменить</string>
 </resources>

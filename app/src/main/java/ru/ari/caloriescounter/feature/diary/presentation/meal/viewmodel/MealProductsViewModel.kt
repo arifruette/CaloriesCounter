@@ -34,6 +34,8 @@ class MealProductsViewModel @Inject constructor(
     private var observeEntriesJob: Job? = null
     private var midnightUpdateJob: Job? = null
     private var observedDate = moscowDateTimeProvider.currentDate()
+    private var latestEntries: List<DiaryEntry> = emptyList()
+    private var pendingDeletedEntry: DiaryEntry? = null
 
     override fun onIntent(intent: MealProductsIntent) {
         when (intent) {
@@ -42,6 +44,7 @@ class MealProductsViewModel @Inject constructor(
                 scheduleMidnightDateSwitch()
             }
             is MealProductsIntent.DeleteEntryClicked -> deleteEntry(intent.entryId)
+            MealProductsIntent.UndoDeleteClicked -> undoDelete()
             MealProductsIntent.AddProductClicked -> navigateToSearch()
         }
     }
@@ -50,6 +53,7 @@ class MealProductsViewModel @Inject constructor(
         observeEntriesJob?.cancel()
         observeEntriesJob = viewModelScope.launch {
             diaryInteractor.observeMealEntries(observedDate, state.value.mealType).collect { entries ->
+                latestEntries = entries
                 val uiEntries = entries.map { it.toUiModel() }
                 updateState {
                     copy(
@@ -67,7 +71,19 @@ class MealProductsViewModel @Inject constructor(
 
     private fun deleteEntry(entryId: Long) {
         viewModelScope.launch {
+            pendingDeletedEntry = latestEntries.firstOrNull { it.id == entryId }
             diaryInteractor.removeEntry(entryId)
+            if (pendingDeletedEntry != null) {
+                emitEffect(MealProductsEffect.ShowUndoDelete)
+            }
+        }
+    }
+
+    private fun undoDelete() {
+        val entryToRestore = pendingDeletedEntry ?: return
+        viewModelScope.launch {
+            diaryInteractor.addEntry(entryToRestore)
+            pendingDeletedEntry = null
         }
     }
 

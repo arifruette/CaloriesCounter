@@ -32,7 +32,10 @@ import androidx.navigation.toRoute
 import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.diary.DiaryRoute
-import ru.ari.caloriescounter.feature.diary.presentation.meal.MealProductsPlaceholderScreen
+import ru.ari.caloriescounter.feature.diary.presentation.meal.MealProductsRoute
+import ru.ari.caloriescounter.feature.diary.presentation.meal.details.ProductDetailsRoute
+import ru.ari.caloriescounter.feature.diary.presentation.meal.search.ProductSearchRoute
+import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchItemUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.weight.WeightGoalRoute
 import ru.ari.caloriescounter.feature.recipes.presentation.RecipesRoute
 import ru.ari.caloriescounter.feature.stats.presentation.StatsRoute
@@ -56,6 +59,8 @@ fun CaloriesCounterRoot() {
     val currentDestination = navBackStackEntry?.destination
     val showBottomBar = currentDestination?.hierarchy?.none {
         it.hasRoute(AppRoute.MealProductsRoute::class) ||
+            it.hasRoute(AppRoute.MealProductSearchRoute::class) ||
+            it.hasRoute(AppRoute.MealProductDetailsRoute::class) ||
             it.hasRoute(AppRoute.WeightGoalRoute::class)
     } != false
 
@@ -144,12 +149,35 @@ private fun CaloriesCounterNavHost(
         composable<AppRoute.RecipesRoute> {
             RecipesRoute(contentPadding = contentPadding)
         }
-        composable<AppRoute.MealProductsRoute> { backStackEntry ->
-            val route = backStackEntry.toRoute<AppRoute.MealProductsRoute>()
-            MealProductsPlaceholderScreen(
-                mealType = route.mealType.toMealTypeOrDefault(),
+        composable<AppRoute.MealProductsRoute> {
+            MealProductsRoute(
                 contentPadding = contentPadding,
                 onBackClick = { navController.popBackStack() },
+                onNavigateToSearch = { mealType ->
+                    navController.navigate(AppRoute.MealProductSearchRoute(mealType = mealType.name))
+                },
+            )
+        }
+        composable<AppRoute.MealProductSearchRoute> {
+            ProductSearchRoute(
+                contentPadding = contentPadding,
+                onBackClick = { navController.popBackStack() },
+                onNavigateToProductDetails = { mealType, product ->
+                    navController.navigate(product.toProductDetailsRoute(mealType))
+                },
+            )
+        }
+        composable<AppRoute.MealProductDetailsRoute> { backStackEntry ->
+            val route = backStackEntry.toRoute<AppRoute.MealProductDetailsRoute>()
+            ProductDetailsRoute(
+                contentPadding = contentPadding,
+                onBackClick = { navController.popBackStack() },
+                onProductAdded = {
+                    navController.popBackStack(
+                        route = AppRoute.MealProductsRoute(route.mealType),
+                        inclusive = false,
+                    )
+                },
             )
         }
         composable<AppRoute.WeightGoalRoute> {
@@ -161,5 +189,15 @@ private fun CaloriesCounterNavHost(
     }
 }
 
-private fun String.toMealTypeOrDefault(): MealType =
-    runCatching { MealType.valueOf(this) }.getOrElse { MealType.BREAKFAST }
+private fun ProductSearchItemUiModel.toProductDetailsRoute(mealType: MealType): AppRoute.MealProductDetailsRoute =
+    AppRoute.MealProductDetailsRoute(
+        mealType = mealType.name,
+        source = source.name,
+        externalId = externalId,
+        barcode = barcode,
+        nameRu = nameRu,
+        caloriesPer100g = caloriesPer100g,
+        proteinPer100g = proteinPer100g,
+        fatPer100g = fatPer100g,
+        carbsPer100g = carbsPer100g,
+    )

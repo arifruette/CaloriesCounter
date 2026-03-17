@@ -29,7 +29,7 @@
     <string name="weight_target_label">Целевой вес</string>
     <string name="weight_value">%1$s кг</string>
     <string name="screen_weight_goal">Вес и цель</string>
-    <string name="weight_goal_encouragement">Шаг за шагом — вы на пути к цели.</string>
+    <string name="weight_goal_encouragement">Шаг за шагом - вы на пути к цели.</string>
     <string name="cd_decrease_current_weight">Уменьшить текущий вес</string>
     <string name="cd_increase_current_weight">Увеличить текущий вес</string>
     <string name="cd_decrease_target_weight">Уменьшить целевой вес</string>
@@ -38,4 +38,22 @@
     <string name="meal_products_next_steps_title">Что будет здесь</string>
     <string name="meal_products_next_steps_body">На этом экране появятся поиск продуктов, выбор порции, быстрый просмотр калорийности и добавление позиции в дневник без возврата назад.</string>
     <string name="meal_products_hint_footer">Пока можно выбрать другой прием пищи на экране дневника или вернуться назад.</string>
+
+    <string name="meal_products_add_fab">Добавить продукт</string>
+    <string name="meal_products_kbju_title">КБЖУ приема пищи</string>
+    <string name="meal_products_macros">Б %1$s · Ж %2$s · У %3$s</string>
+    <string name="meal_products_empty">Список пока пуст. Добавьте первый продукт.</string>
+    <string name="meal_products_entry_summary">%1$s г · %2$d ккал · Б %3$s Ж %4$s У %5$s</string>
+    <string name="meal_products_delete_entry">Удалить продукт из приема пищи</string>
+    <string name="meal_products_search_title">Поиск продуктов</string>
+    <string name="meal_products_search_hint">Введите название продукта</string>
+    <string name="meal_products_search_action">Поиск</string>
+    <string name="meal_products_search_initial">Введите хотя бы один символ, чтобы начать поиск.</string>
+    <string name="meal_products_search_empty">По вашему запросу ничего не найдено.</string>
+    <string name="meal_products_search_error">Не удалось загрузить результаты поиска.</string>
+    <string name="meal_products_search_result_summary">%1$d ккал/100г · Б %2$s Ж %3$s У %4$s</string>
+    <string name="meal_products_details_title">Детали продукта</string>
+    <string name="meal_products_grams_label">Порция (граммы)</string>
+    <string name="meal_products_grams_error">Введите корректное значение больше 0</string>
+    <string name="meal_products_add_action">Добавить в прием пищи</string>
 </resources>

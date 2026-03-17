@@ -2,11 +2,13 @@ package ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.ari.caloriescounter.core.common.mvi.BaseMviViewModel
+import ru.ari.caloriescounter.core.common.time.MoscowDateTimeProvider
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.diary.DayDiary
@@ -21,16 +23,20 @@ import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.W
 class DiaryViewModel @Inject constructor(
     private val interactor: DiaryInteractor,
     private val weightProfileInteractor: WeightProfileInteractor,
+    private val moscowDateTimeProvider: MoscowDateTimeProvider,
 ) : BaseMviViewModel<DiaryIntent, DiaryState, DiaryEffect>(DiaryState()) {
 
     private var observeDiaryJob: Job? = null
     private var observeWeightJob: Job? = null
+    private var midnightUpdateJob: Job? = null
+    private var observedDate = moscowDateTimeProvider.currentDate()
 
     override fun onIntent(intent: DiaryIntent) {
         when (intent) {
             DiaryIntent.ScreenOpened -> {
                 observeDiary()
                 observeWeightProfile()
+                scheduleMidnightDateSwitch()
             }
             is DiaryIntent.MealClicked -> navigateToMeal(intent.mealType)
             DiaryIntent.DecreaseCurrentWeight -> updateCurrentWeight(-WEIGHT_STEP_KG)
@@ -42,10 +48,10 @@ class DiaryViewModel @Inject constructor(
     }
 
     private fun observeDiary() {
-        if (observeDiaryJob != null) return
+        observeDiaryJob?.cancel()
 
         observeDiaryJob = viewModelScope.launch {
-            interactor.observeDiary(LocalDate.now()).collect { dayDiary ->
+            interactor.observeDiary(observedDate).collect { dayDiary ->
                 updateState {
                     copy(
                         mealCards = dayDiary.toMealCards(),
@@ -89,6 +95,21 @@ class DiaryViewModel @Inject constructor(
     private fun navigateToWeightGoal() {
         viewModelScope.launch {
             emitEffect(DiaryEffect.NavigateToWeightGoal)
+        }
+    }
+
+    private fun scheduleMidnightDateSwitch() {
+        if (midnightUpdateJob != null) return
+
+        midnightUpdateJob = viewModelScope.launch {
+            while (isActive) {
+                delay(moscowDateTimeProvider.millisUntilNextMidnight())
+                val newDate = moscowDateTimeProvider.currentDate()
+                if (newDate != observedDate) {
+                    observedDate = newDate
+                    observeDiary()
+                }
+            }
         }
     }
 }

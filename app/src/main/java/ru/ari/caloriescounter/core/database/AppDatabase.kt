@@ -9,7 +9,7 @@ import ru.ari.caloriescounter.core.database.entity.WeightProfileEntity
 
 @Database(
     entities = [CalorieEntryEntity::class, WeightProfileEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {

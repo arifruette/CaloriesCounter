@@ -10,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import ru.ari.caloriescounter.core.database.AppDatabase
 import ru.ari.caloriescounter.core.database.migration.migration1To2
+import ru.ari.caloriescounter.core.database.migration.migration2To3
 import ru.ari.caloriescounter.core.database.dao.CalorieEntryDao
 import ru.ari.caloriescounter.core.database.dao.WeightProfileDao
 
@@ -22,6 +23,7 @@ object DatabaseModule {
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "calories-counter.db")
             .addMigrations(migration1To2)
+            .addMigrations(migration2To3)
             .build()
 
     @Provides

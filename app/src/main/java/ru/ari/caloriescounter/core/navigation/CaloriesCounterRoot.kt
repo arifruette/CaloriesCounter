@@ -3,9 +3,13 @@ package ru.ari.caloriescounter.core.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Book
@@ -18,9 +22,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -58,6 +64,9 @@ fun CaloriesCounterRoot() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val isTopLevelDestination = currentDestination?.hierarchy?.any { destination ->
+        topLevelDestinations.any { destination.hasRoute(it.route::class) }
+    } == true
     val showBottomBar = currentDestination?.hierarchy?.none {
         it.hasRoute(AppRoute.MealProductsRoute::class) ||
             it.hasRoute(AppRoute.MealProductSearchRoute::class) ||
@@ -65,13 +74,26 @@ fun CaloriesCounterRoot() {
             it.hasRoute(AppRoute.WeightGoalRoute::class) ||
             it.hasRoute(AppRoute.NutritionGoalsRoute::class)
     } != false
+    val bottomInsetPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+        .asPaddingValues()
+        .calculateBottomPadding()
+    val bottomBarExtraPadding = 80.dp + bottomInsetPadding
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
-        bottomBar = {
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            CaloriesCounterNavHost(
+                navController = navController,
+                contentPadding = innerPadding.withBottomPadding(
+                    extraBottom = if (isTopLevelDestination) bottomBarExtraPadding else 0.dp,
+                ),
+            )
+
             if (showBottomBar) {
                 NavigationBar(
+                    modifier = Modifier.align(Alignment.BottomCenter),
                     containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
                     contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
                     tonalElevation = 0.dp,
@@ -115,12 +137,7 @@ fun CaloriesCounterRoot() {
                     }
                 }
             }
-        },
-    ) { innerPadding ->
-        CaloriesCounterNavHost(
-            navController = navController,
-            contentPadding = innerPadding,
-        )
+        }
     }
 }
 
@@ -211,4 +228,12 @@ private fun ProductSearchItemUiModel.toProductDetailsRoute(mealType: MealType): 
         proteinPer100g = proteinPer100g,
         fatPer100g = fatPer100g,
         carbsPer100g = carbsPer100g,
+    )
+
+private fun PaddingValues.withBottomPadding(extraBottom: androidx.compose.ui.unit.Dp): PaddingValues =
+    PaddingValues(
+        start = calculateStartPadding(LayoutDirection.Ltr),
+        top = calculateTopPadding(),
+        end = calculateEndPadding(LayoutDirection.Ltr),
+        bottom = calculateBottomPadding() + extraBottom,
     )

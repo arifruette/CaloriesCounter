@@ -19,6 +19,16 @@ interface CalorieEntryDao {
     )
     fun observeEntriesByDateAndMeal(dayDate: String, mealType: String): Flow<List<CalorieEntryEntity>>
 
+    @Query(
+        "SELECT * FROM calorie_entries " +
+            "WHERE dayDate BETWEEN :startDate AND :endDate " +
+            "ORDER BY dayDate ASC, id ASC",
+    )
+    fun observeEntriesBetween(startDate: String, endDate: String): Flow<List<CalorieEntryEntity>>
+
+    @Query("SELECT DISTINCT dayDate FROM calorie_entries ORDER BY dayDate ASC")
+    fun observeLoggedDatesAsc(): Flow<List<String>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEntry(entry: CalorieEntryEntity)
 

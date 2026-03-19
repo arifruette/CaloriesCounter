@@ -74,4 +74,22 @@
     <string name="nutrition_goals_error">Введите значение больше 0</string>
     <string name="nutrition_goals_save">Сохранить</string>
     <string name="action_undo">Отменить</string>
+    <string name="stats_weekly_summary_subtitle">Сводка за последние 7 дней</string>
+    <string name="stats_weekly_summary_empty">За последние 7 дней пока нет записей в дневнике.</string>
+    <string name="stats_metric_avg_calories_title">Средние калории в день</string>
+    <string name="stats_metric_avg_calories_value">%1$d ккал</string>
+    <string name="stats_metric_goal_days_title">Дней с выполненной целью КБЖУ</string>
+    <string name="stats_metric_goal_days_value">%1$d из 7 дней</string>
+    <string name="stats_metric_avg_protein_title">Средний белок за неделю</string>
+    <string name="stats_metric_avg_protein_value">%1$s г/день</string>
+    <string name="stats_metric_avg_meals_title">Среднее число приёмов пищи</string>
+    <string name="stats_metric_avg_meals_value">%1$s приёма/день</string>
+    <string name="stats_metric_best_streak_title">Лучшая серия заполнения</string>
+    <string name="stats_metric_current_streak_title">Текущая серия заполнения</string>
+    <string name="stats_metric_streak_days_value">%1$d дн.</string>
+    <string name="stats_section_week_title">Калории за неделю</string>
+    <string name="stats_section_goals_title">Цели КБЖУ</string>
+    <string name="stats_goal_days_caption">Подсветка дней показывает, где дневная цель выполнена.</string>
+    <string name="stats_section_nutrition_title">Питание</string>
+    <string name="stats_section_streaks_title">Серии</string>
 </resources>

@@ -1,16 +1,14 @@
 package ru.ari.caloriescounter.feature.stats.presentation.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,16 +27,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.ari.caloriescounter.R
@@ -57,9 +50,6 @@ fun StatsWeeklySummaryContent(
         return
     }
 
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
@@ -74,43 +64,17 @@ fun StatsWeeklySummaryContent(
             ScreenHeader()
         }
         item {
-            AnimatedStatsSection(visible = visible, delayMillis = 50) {
-                CaloriesHeroCard(summary = summary)
-            }
+            CaloriesHeroCard(summary = summary)
         }
         item {
-            AnimatedStatsSection(visible = visible, delayMillis = 140) {
-                GoalsSection(summary = summary)
-            }
+            GoalsSection(summary = summary)
         }
         item {
-            AnimatedStatsSection(visible = visible, delayMillis = 230) {
-                NutritionSection(summary = summary)
-            }
+            NutritionSection(summary = summary)
         }
         item {
-            AnimatedStatsSection(visible = visible, delayMillis = 320) {
-                StreakSection(summary = summary)
-            }
+            StreakSection(summary = summary)
         }
-    }
-}
-
-@Composable
-private fun AnimatedStatsSection(
-    visible: Boolean,
-    delayMillis: Int,
-    content: @Composable () -> Unit,
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(animationSpec = tween(durationMillis = 350, delayMillis = delayMillis)) +
-            slideInVertically(
-                animationSpec = tween(durationMillis = 350, delayMillis = delayMillis),
-                initialOffsetY = { it / 6 },
-            ),
-    ) {
-        content()
     }
 }
 
@@ -134,14 +98,16 @@ private fun ScreenHeader() {
 private fun CaloriesHeroCard(summary: WeeklySummaryUiModel) {
     val heroBrush = Brush.verticalGradient(
         listOf(
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
-            MaterialTheme.colorScheme.surfaceContainerLow,
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+            MaterialTheme.colorScheme.surface,
         ),
     )
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
+        shape = MaterialTheme.shapes.large,
     ) {
         Box(
             modifier = Modifier
@@ -190,7 +156,7 @@ private fun MiniCaloriesBarChart(points: List<DailyCaloriePointUiModel>) {
             val barColor = if (point.isGoalCompleted) {
                 MaterialTheme.colorScheme.primary
             } else {
-                MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f)
+                MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
             }
 
             Column(
@@ -208,7 +174,7 @@ private fun MiniCaloriesBarChart(points: List<DailyCaloriePointUiModel>) {
                         .height(84.dp)
                         .width(18.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.35f)),
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)),
                     contentAlignment = Alignment.BottomCenter,
                 ) {
                     Box(
@@ -235,7 +201,9 @@ private fun GoalsSection(summary: WeeklySummaryUiModel) {
         SectionTitle(text = stringResource(R.string.stats_section_goals_title))
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondaryContainer),
+            shape = MaterialTheme.shapes.large,
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -256,7 +224,7 @@ private fun GoalsSection(summary: WeeklySummaryUiModel) {
                         val chipColor = if (point.isGoalCompleted) {
                             MaterialTheme.colorScheme.primaryContainer
                         } else {
-                            MaterialTheme.colorScheme.surfaceVariant
+                            MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f)
                         }
                         val textColor = if (point.isGoalCompleted) {
                             MaterialTheme.colorScheme.onPrimaryContainer
@@ -288,24 +256,14 @@ private fun GoalsSection(summary: WeeklySummaryUiModel) {
 private fun NutritionSection(summary: WeeklySummaryUiModel) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionTitle(text = stringResource(R.string.stats_section_nutrition_title))
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            CompactMetricCard(
-                modifier = Modifier.weight(1f),
-                title = stringResource(R.string.stats_metric_avg_protein_title),
-                value = stringResource(
-                    R.string.stats_metric_avg_protein_value,
-                    summary.averageProteinPerDay.formatRuDecimal(),
-                ),
-            )
-            CompactMetricCard(
-                modifier = Modifier.weight(1f),
-                title = stringResource(R.string.stats_metric_avg_meals_title),
-                value = stringResource(
-                    R.string.stats_metric_avg_meals_value,
-                    summary.averageMealsPerDay.formatRuDecimal(),
-                ),
-            )
-        }
+        CompactMetricCard(
+            modifier = Modifier.fillMaxWidth(),
+            title = stringResource(R.string.stats_metric_avg_protein_title),
+            value = stringResource(
+                R.string.stats_metric_avg_protein_value,
+                summary.averageProteinPerDay.formatRuDecimal(),
+            ),
+        )
     }
 }
 
@@ -313,43 +271,40 @@ private fun NutritionSection(summary: WeeklySummaryUiModel) {
 private fun StreakSection(summary: WeeklySummaryUiModel) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionTitle(text = stringResource(R.string.stats_section_streaks_title))
+
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
+            shape = MaterialTheme.shapes.large,
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            listOf(
-                                Color.Transparent,
-                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-                            ),
-                        ),
-                    )
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.Top,
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(38.dp)
+                                .size(42.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFFF8A50).copy(alpha = 0.20f)),
+                                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.LocalFireDepartment,
                                 contentDescription = null,
-                                tint = Color(0xFFFF8A50),
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         }
                         Column {
@@ -363,17 +318,14 @@ private fun StreakSection(summary: WeeklySummaryUiModel) {
                                     R.string.stats_metric_streak_days_value,
                                     summary.currentStreakDays,
                                 ),
-                                style = MaterialTheme.typography.titleLarge,
+                                style = MaterialTheme.typography.headlineLarge,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
-                    CompactBadge(
-                        title = stringResource(R.string.stats_metric_best_streak_title),
-                        value = stringResource(
-                            R.string.stats_metric_streak_days_value,
-                            summary.bestStreakDays,
-                        ),
+                    StreakMetricChip(
+                        title = stringResource(R.string.stats_metric_best_streak_short_title),
+                        value = stringResource(R.string.stats_metric_streak_days_value, summary.bestStreakDays),
                     )
                 }
             }
@@ -398,7 +350,9 @@ private fun CompactMetricCard(
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
+        shape = MaterialTheme.shapes.medium,
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
@@ -419,16 +373,16 @@ private fun CompactMetricCard(
 }
 
 @Composable
-private fun CompactBadge(
+private fun StreakMetricChip(
     title: String,
     value: String,
 ) {
     Column(
         modifier = Modifier
-            .widthIn(min = 90.dp)
+            .widthIn(min = 96.dp)
             .clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f))
-            .padding(horizontal = 10.dp, vertical = 8.dp),
+            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f))
+            .padding(horizontal = 12.dp, vertical = 9.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {

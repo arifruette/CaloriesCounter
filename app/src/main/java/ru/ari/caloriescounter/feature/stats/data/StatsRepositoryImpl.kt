@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.combine
 import ru.ari.caloriescounter.core.database.dao.CalorieEntryDao
 import ru.ari.caloriescounter.core.database.dao.NutritionGoalsDao
 import ru.ari.caloriescounter.core.database.entity.CalorieEntryEntity
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionGoals
 import ru.ari.caloriescounter.feature.stats.domain.StatsRepository
 import ru.ari.caloriescounter.feature.stats.domain.model.DailyCaloriePoint
@@ -29,6 +28,7 @@ class StatsRepositoryImpl @Inject constructor(
         ) { entries, goalsEntity, loggedDates ->
             val goals = goalsEntity?.toDomain() ?: DEFAULT_GOALS
             val dayStats = buildDayStats(startDate = startDate, endDate = endDate, entries = entries)
+            val weeklyCaloriesTotal = dayStats.values.sumOf { it.calories }
             val dailyCalories = dayStats.map { (date, day) ->
                 DailyCaloriePoint(
                     date = date,
@@ -43,10 +43,9 @@ class StatsRepositoryImpl @Inject constructor(
                 startDate = startDate,
                 endDate = endDate,
                 dailyCalories = dailyCalories,
-                averageCaloriesPerDay = dayStats.values.sumOf { it.calories } / WINDOW_DAYS.toDouble(),
+                averageCaloriesPerDay = weeklyCaloriesTotal / WINDOW_DAYS.toDouble(),
                 goalCompletedDays = goalCompletedDays,
                 averageProteinPerDay = dayStats.values.sumOf { it.protein } / WINDOW_DAYS.toDouble(),
-                averageMealsPerDay = dayStats.values.sumOf { it.uniqueMealsCount.toDouble() } / WINDOW_DAYS.toDouble(),
                 bestStreakDays = calculateBestStreak(loggedDateSet),
                 currentStreakDays = calculateCurrentStreak(loggedDateSet, endDate = endDate),
                 loggedDaysInWindow = dayStats.values.count { it.hasEntries },
@@ -60,11 +59,8 @@ private data class DayStats(
     val protein: Double = 0.0,
     val fat: Double = 0.0,
     val carbs: Double = 0.0,
-    val meals: Set<MealType> = emptySet(),
     val hasEntries: Boolean = false,
-) {
-    val uniqueMealsCount: Int get() = meals.size
-}
+)
 
 private fun buildDayStats(
     startDate: LocalDate,
@@ -81,7 +77,6 @@ private fun buildDayStats(
     entries.forEach { entity ->
         val date = parseLocalDateOrNull(entity.dayDate) ?: return@forEach
         val current = initial[date] ?: return@forEach
-        val mealType = runCatching { MealType.valueOf(entity.mealType) }.getOrElse { MealType.SNACK }
         val multiplier = entity.portionGrams / 100.0
         val calories = entity.caloriesPer100g * multiplier
         val protein = entity.proteinPer100g * multiplier
@@ -93,7 +88,6 @@ private fun buildDayStats(
             protein = current.protein + protein,
             fat = current.fat + fat,
             carbs = current.carbs + carbs,
-            meals = current.meals + mealType,
             hasEntries = true,
         )
     }

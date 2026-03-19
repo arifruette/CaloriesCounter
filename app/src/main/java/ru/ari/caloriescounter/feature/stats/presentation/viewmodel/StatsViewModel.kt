@@ -77,7 +77,9 @@ class StatsViewModel @Inject constructor(
 
 private fun WeeklySummary.toUiModel(): WeeklySummaryUiModel =
     WeeklySummaryUiModel(
-        dailyCalories = dailyCalories.map { point ->
+        dailyCalories = dailyCalories
+            .sortedBy { it.date.dayOfWeek.value }
+            .map { point ->
             DailyCaloriePointUiModel(
                 dayLabel = point.date.format(WEEKDAY_FORMATTER).replaceFirstChar { char ->
                     if (char.isLowerCase()) {
@@ -93,7 +95,6 @@ private fun WeeklySummary.toUiModel(): WeeklySummaryUiModel =
         averageCaloriesPerDay = averageCaloriesPerDay.roundToInt(),
         goalCompletedDays = goalCompletedDays,
         averageProteinPerDay = roundToSingleDecimal(averageProteinPerDay),
-        averageMealsPerDay = roundToSingleDecimal(averageMealsPerDay),
         bestStreakDays = bestStreakDays,
         currentStreakDays = currentStreakDays,
         loggedDaysInWindow = loggedDaysInWindow,

@@ -5,7 +5,6 @@ data class WeeklySummaryUiModel(
     val averageCaloriesPerDay: Int,
     val goalCompletedDays: Int,
     val averageProteinPerDay: Double,
-    val averageMealsPerDay: Double,
     val bestStreakDays: Int,
     val currentStreakDays: Int,
     val loggedDaysInWindow: Int,

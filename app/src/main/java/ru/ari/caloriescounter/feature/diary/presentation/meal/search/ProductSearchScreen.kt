@@ -12,35 +12,45 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.feature.diary.presentation.common.formatRuDecimal
@@ -52,10 +62,12 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.c
 fun ProductSearchScreen(
     state: ProductSearchState,
     contentPadding: PaddingValues,
+    snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onQueryChanged: (String) -> Unit,
     onSearchSubmit: () -> Unit,
     onProductClick: (ProductSearchItemUiModel) -> Unit,
+    onQuickAddClick: (ProductSearchItemUiModel) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -75,6 +87,24 @@ fun ProductSearchScreen(
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
             )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.imePadding(),
+            ) { data ->
+                Snackbar(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Text(
+                        text = data.visuals.message,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
@@ -134,6 +164,8 @@ fun ProductSearchScreen(
                             ProductSearchResultCard(
                                 product = product,
                                 onClick = { onProductClick(product) },
+                                onQuickAddClick = { onQuickAddClick(product) },
+                                isQuickAddInProgress = state.quickAddInProgressKey == product.stableKey(),
                             )
                         }
                     }
@@ -212,6 +244,8 @@ private fun ProductSearchShimmerCard(shimmerBrush: Brush) {
 private fun ProductSearchResultCard(
     product: ProductSearchItemUiModel,
     onClick: () -> Unit,
+    onQuickAddClick: () -> Unit,
+    isQuickAddInProgress: Boolean,
 ) {
     Card(
         modifier = Modifier
@@ -220,28 +254,58 @@ private fun ProductSearchResultCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = MaterialTheme.shapes.medium,
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = product.nameRu,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                text = stringResource(
-                    R.string.meal_products_search_result_summary,
-                    product.caloriesPer100g.toInt(),
-                    product.proteinPer100g.formatRuDecimal(),
-                    product.fatPer100g.formatRuDecimal(),
-                    product.carbsPer100g.formatRuDecimal(),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text(
+                    text = product.nameRu,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    text = stringResource(
+                        R.string.meal_products_search_result_summary,
+                        product.caloriesPer100g.toInt(),
+                        product.proteinPer100g.formatRuDecimal(),
+                        product.fatPer100g.formatRuDecimal(),
+                        product.carbsPer100g.formatRuDecimal(),
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = stringResource(R.string.meal_products_search_quick_add_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            IconButton(
+                onClick = onQuickAddClick,
+                enabled = !isQuickAddInProgress,
+            ) {
+                if (isQuickAddInProgress) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp,
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.meal_products_search_quick_add_cd),
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
         }
     }
 }
+
+private fun ProductSearchItemUiModel.stableKey(): String = "${source.name}:${externalId}:${nameRu}"

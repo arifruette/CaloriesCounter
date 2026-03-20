@@ -7,4 +7,5 @@ sealed interface ProductSearchIntent : UiIntent {
     data class QueryChanged(val query: String) : ProductSearchIntent
     data object SubmitSearch : ProductSearchIntent
     data class ProductClicked(val product: ProductSearchItemUiModel) : ProductSearchIntent
+    data class QuickAddClicked(val product: ProductSearchItemUiModel) : ProductSearchIntent
 }

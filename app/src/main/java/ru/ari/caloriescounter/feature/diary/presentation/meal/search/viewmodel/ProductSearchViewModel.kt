@@ -11,9 +11,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.core.common.mvi.BaseMviViewModel
+import ru.ari.caloriescounter.core.common.time.MoscowDateTimeProvider
 import ru.ari.caloriescounter.core.navigation.AppRoute
+import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractor
+import ru.ari.caloriescounter.feature.diary.domain.model.diary.DiaryEntry
 import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
+import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionPer100g
+import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.Portion
+import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductRef
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchItemUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.contract.ProductSearchEffect
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.contract.ProductSearchIntent
@@ -23,6 +29,8 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.c
 class ProductSearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val productSearchInteractor: ProductSearchInteractor,
+    private val diaryInteractor: DiaryInteractor,
+    private val moscowDateTimeProvider: MoscowDateTimeProvider,
 ) : BaseMviViewModel<ProductSearchIntent, ProductSearchState, ProductSearchEffect>(ProductSearchState()) {
 
     private val mealType = savedStateHandle.toRoute<AppRoute.MealProductSearchRoute>().mealType
@@ -34,6 +42,7 @@ class ProductSearchViewModel @Inject constructor(
             is ProductSearchIntent.QueryChanged -> onQueryChanged(intent.query)
             ProductSearchIntent.SubmitSearch -> submitSearch(state.value.query.trim())
             is ProductSearchIntent.ProductClicked -> navigateToDetails(intent.product)
+            is ProductSearchIntent.QuickAddClicked -> addProductWithDefaultPortion(intent.product)
         }
     }
 
@@ -105,7 +114,47 @@ class ProductSearchViewModel @Inject constructor(
             emitEffect(ProductSearchEffect.NavigateToProductDetails(mealType = mealType, product = product))
         }
     }
+
+    private fun addProductWithDefaultPortion(product: ProductSearchItemUiModel) {
+        if (state.value.quickAddInProgressKey != null) return
+        val productKey = product.toStableKey()
+        viewModelScope.launch {
+            updateState { copy(quickAddInProgressKey = productKey) }
+            runCatching {
+                diaryInteractor.addEntry(
+                    DiaryEntry(
+                        id = 0,
+                        date = moscowDateTimeProvider.currentDate(),
+                        mealType = mealType,
+                        product = ProductRef(
+                            source = product.source,
+                            externalId = product.externalId,
+                            barcode = product.barcode,
+                            nameRu = product.nameRu,
+                            nameOriginal = null,
+                        ),
+                        nutritionPer100g = NutritionPer100g(
+                            calories = product.caloriesPer100g,
+                            protein = product.proteinPer100g,
+                            fat = product.fatPer100g,
+                            carbs = product.carbsPer100g,
+                        ),
+                        portion = Portion(grams = DEFAULT_QUICK_ADD_GRAMS),
+                    ),
+                )
+            }.onSuccess {
+                emitEffect(ProductSearchEffect.ProductQuickAdded(productName = product.nameRu))
+            }.onFailure {
+                emitEffect(ProductSearchEffect.ShowMessage(R.string.meal_products_search_quick_add_error))
+            }
+            updateState { copy(quickAddInProgressKey = null) }
+        }
+    }
 }
 
 private fun String.toMealTypeOrDefault(): MealType =
     runCatching { MealType.valueOf(this) }.getOrElse { MealType.BREAKFAST }
+
+private fun ProductSearchItemUiModel.toStableKey(): String = "${source.name}:${externalId}:${nameRu}"
+
+private const val DEFAULT_QUICK_ADD_GRAMS = 100.0

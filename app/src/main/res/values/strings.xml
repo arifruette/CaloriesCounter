@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Счетчик калорий</string>
 
     <string name="tab_diary">Дневник</string>
@@ -51,6 +51,11 @@
     <string name="meal_products_search_error">Не удалось загрузить результаты поиска.</string>
     <string name="meal_products_search_timeout">Сервер отвечает слишком долго. Проверьте интернет и повторите поиск.</string>
     <string name="meal_products_search_result_summary">%1$d ккал/100г · Б %2$s Ж %3$s У %4$s</string>
+    <string name="meal_products_search_quick_add_hint">Быстрое добавление: +100 г</string>
+    <string name="meal_products_search_quick_add_cd">Добавить 100 г в прием пищи</string>
+    <string name="meal_products_search_quick_add_success">Добавлено 100 г</string>
+    <string name="meal_products_search_quick_add_success_with_name">Добавлено 100 г: %1$s</string>
+    <string name="meal_products_search_quick_add_error">Не удалось добавить продукт</string>
     <string name="meal_products_details_title">Детали продукта</string>
     <string name="meal_products_metric_calories">Калории</string>
     <string name="meal_products_metric_protein">Белки</string>
@@ -89,3 +94,5 @@
     <string name="stats_section_nutrition_title">Питание</string>
     <string name="stats_section_streaks_title">Серии</string>
 </resources>
+
+

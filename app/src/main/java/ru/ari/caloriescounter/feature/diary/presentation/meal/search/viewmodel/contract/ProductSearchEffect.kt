@@ -9,4 +9,7 @@ sealed interface ProductSearchEffect : UiEffect {
         val mealType: MealType,
         val product: ProductSearchItemUiModel,
     ) : ProductSearchEffect
+
+    data class ShowMessage(val messageResId: Int) : ProductSearchEffect
+    data class ProductQuickAdded(val productName: String) : ProductSearchEffect
 }

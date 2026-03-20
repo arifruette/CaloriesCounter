@@ -9,4 +9,5 @@ data class ProductSearchState(
     val results: List<ProductSearchItemUiModel> = emptyList(),
     val hasError: Boolean = false,
     val errorMessageResId: Int? = null,
+    val quickAddInProgressKey: String? = null,
 ) : UiState

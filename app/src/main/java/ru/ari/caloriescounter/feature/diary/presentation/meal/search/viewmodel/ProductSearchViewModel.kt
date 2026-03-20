@@ -6,6 +6,7 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import java.net.SocketTimeoutException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,6 +37,7 @@ class ProductSearchViewModel @Inject constructor(
     private val mealType = savedStateHandle.toRoute<AppRoute.MealProductSearchRoute>().mealType
         .toMealTypeOrDefault()
     private var debounceSearchJob: Job? = null
+    private var searchRequestJob: Job? = null
 
     override fun onIntent(intent: ProductSearchIntent) {
         when (intent) {
@@ -52,6 +54,7 @@ class ProductSearchViewModel @Inject constructor(
 
         debounceSearchJob?.cancel()
         if (normalizedQuery.isBlank()) {
+            searchRequestJob?.cancel()
             updateState { copy(results = emptyList(), isLoading = false, hasError = false, errorMessageResId = null) }
             return
         }
@@ -63,15 +66,19 @@ class ProductSearchViewModel @Inject constructor(
     }
 
     private fun submitSearch(query: String) {
-        if (query.isBlank()) {
+        val normalizedQuery = query.trim()
+        if (normalizedQuery.isBlank()) {
+            searchRequestJob?.cancel()
             updateState { copy(results = emptyList(), isLoading = false, hasError = false, errorMessageResId = null) }
             return
         }
 
         debounceSearchJob?.cancel()
-        viewModelScope.launch {
+        searchRequestJob?.cancel()
+        searchRequestJob = viewModelScope.launch {
             updateState { copy(isLoading = true, hasError = false, errorMessageResId = null) }
-            val result = runCatching { productSearchInteractor.searchByName(query) }
+            val result = runCatching { productSearchInteractor.searchByName(normalizedQuery) }
+            if (normalizedQuery != state.value.query.trim()) return@launch
             result.onSuccess { products ->
                 updateState {
                     copy(
@@ -93,6 +100,7 @@ class ProductSearchViewModel @Inject constructor(
                     )
                 }
             }.onFailure { error ->
+                if (error is CancellationException) throw error
                 updateState {
                     copy(
                         isLoading = false,

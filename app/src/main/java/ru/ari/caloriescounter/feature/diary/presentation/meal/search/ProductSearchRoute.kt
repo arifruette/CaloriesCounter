@@ -21,6 +21,7 @@ fun ProductSearchRoute(
     contentPadding: PaddingValues,
     onBackClick: () -> Unit,
     onNavigateToProductDetails: (MealType, ProductSearchItemUiModel) -> Unit,
+    onNavigateToManualProductCreate: (MealType) -> Unit,
     viewModel: ProductSearchViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -41,6 +42,12 @@ fun ProductSearchRoute(
                             effect.productName,
                         ),
                     )
+                is ProductSearchEffect.NavigateToManualProductCreate ->
+                    onNavigateToManualProductCreate(effect.mealType)
+                ProductSearchEffect.ManualProductDeleted ->
+                    snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.meal_products_manual_delete_success),
+                    )
             }
         }
     }
@@ -54,5 +61,14 @@ fun ProductSearchRoute(
         onSearchSubmit = { viewModel.onIntent(ProductSearchIntent.SubmitSearch) },
         onProductClick = { product -> viewModel.onIntent(ProductSearchIntent.ProductClicked(product)) },
         onQuickAddClick = { product -> viewModel.onIntent(ProductSearchIntent.QuickAddClicked(product)) },
+        onTabSelected = { tab -> viewModel.onIntent(ProductSearchIntent.TabSelected(tab)) },
+        onCreateManualProductClick = { viewModel.onIntent(ProductSearchIntent.CreateManualProductClicked) },
+        onManualProductClick = { product -> viewModel.onIntent(ProductSearchIntent.ManualProductClicked(product)) },
+        onManualQuickAddClick = { product ->
+            viewModel.onIntent(ProductSearchIntent.ManualProductQuickAddClicked(product))
+        },
+        onManualDeleteClick = { productId ->
+            viewModel.onIntent(ProductSearchIntent.ManualProductDeleteClicked(productId))
+        },
     )
 }

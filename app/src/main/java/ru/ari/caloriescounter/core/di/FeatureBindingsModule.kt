@@ -6,15 +6,19 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import ru.ari.caloriescounter.feature.diary.data.DiaryRepositoryImpl
+import ru.ari.caloriescounter.feature.diary.data.ManualProductRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.NutritionGoalsRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.ProductSearchRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.WeightProfileRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.domain.DiaryRepository
+import ru.ari.caloriescounter.feature.diary.domain.ManualProductRepository
 import ru.ari.caloriescounter.feature.diary.domain.NutritionGoalsRepository
 import ru.ari.caloriescounter.feature.diary.domain.ProductSearchRepository
 import ru.ari.caloriescounter.feature.diary.domain.WeightProfileRepository
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractorImpl
+import ru.ari.caloriescounter.feature.diary.domain.interactor.ManualProductInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.ManualProductInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.interactor.NutritionGoalsInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.NutritionGoalsInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractor
@@ -52,6 +56,10 @@ abstract class FeatureBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindManualProductRepository(impl: ManualProductRepositoryImpl): ManualProductRepository
+
+    @Binds
+    @Singleton
     abstract fun bindDiaryInteractor(impl: DiaryInteractorImpl): DiaryInteractor
 
     @Binds
@@ -69,4 +77,8 @@ abstract class FeatureBindingsModule {
     @Binds
     @Singleton
     abstract fun bindProductSearchInteractor(impl: ProductSearchInteractorImpl): ProductSearchInteractor
+
+    @Binds
+    @Singleton
+    abstract fun bindManualProductInteractor(impl: ManualProductInteractorImpl): ManualProductInteractor
 }

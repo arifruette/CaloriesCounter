@@ -40,6 +40,7 @@ import ru.ari.caloriescounter.feature.diary.presentation.diary.DiaryRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.MealProductsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.details.ProductDetailsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.ProductSearchRoute
+import ru.ari.caloriescounter.feature.diary.presentation.meal.search.create.ManualProductCreateRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchItemUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.NutritionGoalsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.weight.WeightGoalRoute
@@ -65,8 +66,9 @@ fun CaloriesCounterRoot() {
         topLevelDestinations.any { destination.hasRoute(it.route::class) }
     } == true
     val showBottomBar = currentDestination?.hierarchy?.none {
-        it.hasRoute(AppRoute.MealProductsRoute::class) ||
+            it.hasRoute(AppRoute.MealProductsRoute::class) ||
             it.hasRoute(AppRoute.MealProductSearchRoute::class) ||
+            it.hasRoute(AppRoute.ManualProductCreateRoute::class) ||
             it.hasRoute(AppRoute.MealProductDetailsRoute::class) ||
             it.hasRoute(AppRoute.WeightGoalRoute::class) ||
             it.hasRoute(AppRoute.NutritionGoalsRoute::class)
@@ -181,6 +183,16 @@ private fun CaloriesCounterNavHost(
                 onNavigateToProductDetails = { mealType, product ->
                     navController.navigate(product.toProductDetailsRoute(mealType))
                 },
+                onNavigateToManualProductCreate = { mealType ->
+                    navController.navigate(AppRoute.ManualProductCreateRoute(mealType = mealType.name))
+                },
+            )
+        }
+        composable<AppRoute.ManualProductCreateRoute> {
+            ManualProductCreateRoute(
+                contentPadding = contentPadding,
+                onBackClick = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
             )
         }
         composable<AppRoute.MealProductDetailsRoute> { backStackEntry ->

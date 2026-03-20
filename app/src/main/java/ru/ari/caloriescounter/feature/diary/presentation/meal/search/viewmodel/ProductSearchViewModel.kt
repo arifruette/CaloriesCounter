@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import java.net.SocketTimeoutException
+import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,13 +15,17 @@ import ru.ari.caloriescounter.core.common.mvi.BaseMviViewModel
 import ru.ari.caloriescounter.core.common.time.MoscowDateTimeProvider
 import ru.ari.caloriescounter.core.navigation.AppRoute
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.ManualProductInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.diary.DiaryEntry
 import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionPer100g
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.Portion
 import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductRef
+import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductSource
+import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ManualProductUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchItemUiModel
+import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchTab
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.contract.ProductSearchEffect
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.contract.ProductSearchIntent
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.contract.ProductSearchState
@@ -30,6 +34,7 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.c
 class ProductSearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val productSearchInteractor: ProductSearchInteractor,
+    private val manualProductInteractor: ManualProductInteractor,
     private val diaryInteractor: DiaryInteractor,
     private val moscowDateTimeProvider: MoscowDateTimeProvider,
 ) : BaseMviViewModel<ProductSearchIntent, ProductSearchState, ProductSearchEffect>(ProductSearchState()) {
@@ -39,13 +44,47 @@ class ProductSearchViewModel @Inject constructor(
     private var debounceSearchJob: Job? = null
     private var searchRequestJob: Job? = null
 
+    init {
+        observeManualProducts()
+    }
+
     override fun onIntent(intent: ProductSearchIntent) {
         when (intent) {
+            is ProductSearchIntent.TabSelected -> onTabSelected(intent.tab)
             is ProductSearchIntent.QueryChanged -> onQueryChanged(intent.query)
             ProductSearchIntent.SubmitSearch -> submitSearch(state.value.query.trim())
             is ProductSearchIntent.ProductClicked -> navigateToDetails(intent.product)
             is ProductSearchIntent.QuickAddClicked -> addProductWithDefaultPortion(intent.product)
+            is ProductSearchIntent.ManualProductClicked -> navigateToDetails(intent.product.toSearchItem())
+            is ProductSearchIntent.ManualProductQuickAddClicked -> addManualProductWithDefaultPortion(intent.product)
+            is ProductSearchIntent.ManualProductDeleteClicked -> deleteManualProduct(intent.productId)
+            ProductSearchIntent.CreateManualProductClicked -> navigateToManualCreate()
         }
+    }
+
+    private fun observeManualProducts() {
+        viewModelScope.launch {
+            manualProductInteractor.observeAll().collect { manualProducts ->
+                updateState {
+                    copy(
+                        manualProducts = manualProducts.map { product ->
+                            ManualProductUiModel(
+                                id = product.id,
+                                nameRu = product.nameRu,
+                                caloriesPer100g = product.nutritionPer100g.calories,
+                                proteinPer100g = product.nutritionPer100g.protein,
+                                fatPer100g = product.nutritionPer100g.fat,
+                                carbsPer100g = product.nutritionPer100g.carbs,
+                            )
+                        },
+                    )
+                }
+            }
+        }
+    }
+
+    private fun onTabSelected(tab: ProductSearchTab) {
+        updateState { copy(selectedTab = tab) }
     }
 
     private fun onQueryChanged(query: String) {
@@ -123,6 +162,12 @@ class ProductSearchViewModel @Inject constructor(
         }
     }
 
+    private fun navigateToManualCreate() {
+        viewModelScope.launch {
+            emitEffect(ProductSearchEffect.NavigateToManualProductCreate(mealType = mealType))
+        }
+    }
+
     private fun addProductWithDefaultPortion(product: ProductSearchItemUiModel) {
         if (state.value.quickAddInProgressKey != null) return
         val productKey = product.toStableKey()
@@ -130,24 +175,10 @@ class ProductSearchViewModel @Inject constructor(
             updateState { copy(quickAddInProgressKey = productKey) }
             runCatching {
                 diaryInteractor.addEntry(
-                    DiaryEntry(
-                        id = 0,
+                    product.toDiaryEntry(
                         date = moscowDateTimeProvider.currentDate(),
                         mealType = mealType,
-                        product = ProductRef(
-                            source = product.source,
-                            externalId = product.externalId,
-                            barcode = product.barcode,
-                            nameRu = product.nameRu,
-                            nameOriginal = null,
-                        ),
-                        nutritionPer100g = NutritionPer100g(
-                            calories = product.caloriesPer100g,
-                            protein = product.proteinPer100g,
-                            fat = product.fatPer100g,
-                            carbs = product.carbsPer100g,
-                        ),
-                        portion = Portion(grams = DEFAULT_QUICK_ADD_GRAMS),
+                        grams = DEFAULT_QUICK_ADD_GRAMS,
                     ),
                 )
             }.onSuccess {
@@ -158,11 +189,84 @@ class ProductSearchViewModel @Inject constructor(
             updateState { copy(quickAddInProgressKey = null) }
         }
     }
+
+    private fun addManualProductWithDefaultPortion(product: ManualProductUiModel) {
+        if (state.value.manualQuickAddInProgressId != null) return
+        viewModelScope.launch {
+            updateState { copy(manualQuickAddInProgressId = product.id) }
+            runCatching {
+                diaryInteractor.addEntry(
+                    product.toSearchItem().toDiaryEntry(
+                        date = moscowDateTimeProvider.currentDate(),
+                        mealType = mealType,
+                        grams = DEFAULT_QUICK_ADD_GRAMS,
+                    ),
+                )
+            }.onSuccess {
+                emitEffect(ProductSearchEffect.ProductQuickAdded(productName = product.nameRu))
+            }.onFailure {
+                emitEffect(ProductSearchEffect.ShowMessage(R.string.meal_products_search_quick_add_error))
+            }
+            updateState { copy(manualQuickAddInProgressId = null) }
+        }
+    }
+
+    private fun deleteManualProduct(productId: Long) {
+        if (state.value.manualDeleteInProgressId != null) return
+        viewModelScope.launch {
+            updateState { copy(manualDeleteInProgressId = productId) }
+            runCatching {
+                manualProductInteractor.delete(productId)
+            }.onSuccess {
+                emitEffect(ProductSearchEffect.ManualProductDeleted)
+            }.onFailure {
+                emitEffect(ProductSearchEffect.ShowMessage(R.string.meal_products_manual_delete_error))
+            }
+            updateState { copy(manualDeleteInProgressId = null) }
+        }
+    }
 }
 
 private fun String.toMealTypeOrDefault(): MealType =
     runCatching { MealType.valueOf(this) }.getOrElse { MealType.BREAKFAST }
 
 private fun ProductSearchItemUiModel.toStableKey(): String = "${source.name}:${externalId}:${nameRu}"
+
+private fun ProductSearchItemUiModel.toDiaryEntry(
+    date: java.time.LocalDate,
+    mealType: MealType,
+    grams: Double,
+): DiaryEntry =
+    DiaryEntry(
+        id = 0,
+        date = date,
+        mealType = mealType,
+        product = ProductRef(
+            source = source,
+            externalId = externalId,
+            barcode = barcode,
+            nameRu = nameRu,
+            nameOriginal = null,
+        ),
+        nutritionPer100g = NutritionPer100g(
+            calories = caloriesPer100g,
+            protein = proteinPer100g,
+            fat = fatPer100g,
+            carbs = carbsPer100g,
+        ),
+        portion = Portion(grams = grams),
+    )
+
+private fun ManualProductUiModel.toSearchItem(): ProductSearchItemUiModel =
+    ProductSearchItemUiModel(
+        source = ProductSource.MANUAL,
+        externalId = id.toString(),
+        barcode = null,
+        nameRu = nameRu,
+        caloriesPer100g = caloriesPer100g,
+        proteinPer100g = proteinPer100g,
+        fatPer100g = fatPer100g,
+        carbsPer100g = carbsPer100g,
+    )
 
 private const val DEFAULT_QUICK_ADD_GRAMS = 100.0

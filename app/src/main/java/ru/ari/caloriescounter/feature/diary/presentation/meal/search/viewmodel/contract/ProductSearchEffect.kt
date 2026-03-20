@@ -12,4 +12,6 @@ sealed interface ProductSearchEffect : UiEffect {
 
     data class ShowMessage(val messageResId: Int) : ProductSearchEffect
     data class ProductQuickAdded(val productName: String) : ProductSearchEffect
+    data class NavigateToManualProductCreate(val mealType: MealType) : ProductSearchEffect
+    data object ManualProductDeleted : ProductSearchEffect
 }

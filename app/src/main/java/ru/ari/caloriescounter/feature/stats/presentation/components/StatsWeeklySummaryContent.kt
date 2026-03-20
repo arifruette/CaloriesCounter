@@ -67,13 +67,13 @@ fun StatsWeeklySummaryContent(
             CaloriesHeroCard(summary = summary)
         }
         item {
+            StreakSection(summary = summary)
+        }
+        item {
             GoalsSection(summary = summary)
         }
         item {
             NutritionSection(summary = summary)
-        }
-        item {
-            StreakSection(summary = summary)
         }
     }
 }

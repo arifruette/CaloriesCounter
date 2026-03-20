@@ -21,10 +21,6 @@ import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInter
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractorImpl
-import ru.ari.caloriescounter.feature.recipes.data.RecipesRepositoryImpl
-import ru.ari.caloriescounter.feature.recipes.domain.RecipesRepository
-import ru.ari.caloriescounter.feature.recipes.domain.interactor.RecipesInteractor
-import ru.ari.caloriescounter.feature.recipes.domain.interactor.RecipesInteractorImpl
 import ru.ari.caloriescounter.feature.stats.data.StatsRepositoryImpl
 import ru.ari.caloriescounter.feature.stats.domain.StatsRepository
 import ru.ari.caloriescounter.feature.stats.domain.interactor.StatsInteractor
@@ -56,10 +52,6 @@ abstract class FeatureBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindRecipesRepository(impl: RecipesRepositoryImpl): RecipesRepository
-
-    @Binds
-    @Singleton
     abstract fun bindDiaryInteractor(impl: DiaryInteractorImpl): DiaryInteractor
 
     @Binds
@@ -77,9 +69,4 @@ abstract class FeatureBindingsModule {
     @Binds
     @Singleton
     abstract fun bindProductSearchInteractor(impl: ProductSearchInteractorImpl): ProductSearchInteractor
-
-    @Binds
-    @Singleton
-    abstract fun bindRecipesInteractor(impl: RecipesInteractorImpl): RecipesInteractor
 }
-

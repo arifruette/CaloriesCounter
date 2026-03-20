@@ -3,16 +3,13 @@
 
     <string name="tab_diary">Дневник</string>
     <string name="tab_stats">Статистика</string>
-    <string name="tab_recipes">Рецепты</string>
 
     <string name="screen_diary">Дневник</string>
     <string name="screen_stats">Статистика</string>
-    <string name="screen_recipes">Рецепты</string>
     <string name="screen_meal_products">Добавление продуктов</string>
 
     <string name="diary_subtitle">Выберите прием пищи, чтобы добавить блюда.</string>
     <string name="route_stats">Маршрут: статистика</string>
-    <string name="route_recipes">Маршрут: рецепты</string>
 
     <string name="meal_breakfast">Завтрак</string>
     <string name="meal_lunch">Обед</string>

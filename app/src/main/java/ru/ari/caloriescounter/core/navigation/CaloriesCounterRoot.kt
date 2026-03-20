@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoGraph
-import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -44,7 +43,6 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.search.ProductSear
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchItemUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.NutritionGoalsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.weight.WeightGoalRoute
-import ru.ari.caloriescounter.feature.recipes.presentation.RecipesRoute
 import ru.ari.caloriescounter.feature.stats.presentation.StatsRoute
 
 private data class TopLevelDestination(
@@ -56,7 +54,6 @@ private data class TopLevelDestination(
 private val topLevelDestinations = listOf(
     TopLevelDestination(AppRoute.DiaryRoute, R.string.tab_diary, Icons.Filled.Restaurant),
     TopLevelDestination(AppRoute.StatsRoute, R.string.tab_stats, Icons.Filled.AutoGraph),
-    TopLevelDestination(AppRoute.RecipesRoute, R.string.tab_recipes, Icons.Filled.Book),
 )
 
 @Composable
@@ -167,9 +164,6 @@ private fun CaloriesCounterNavHost(
         }
         composable<AppRoute.StatsRoute> {
             StatsRoute(contentPadding = contentPadding)
-        }
-        composable<AppRoute.RecipesRoute> {
-            RecipesRoute(contentPadding = contentPadding)
         }
         composable<AppRoute.MealProductsRoute> {
             MealProductsRoute(

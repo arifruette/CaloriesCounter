@@ -50,7 +50,7 @@
     <string name="meal_products_search_empty">По вашему запросу ничего не найдено.</string>
     <string name="meal_products_search_error">Не удалось загрузить результаты поиска.</string>
     <string name="meal_products_search_timeout">Сервер отвечает слишком долго. Проверьте интернет и повторите поиск.</string>
-    <string name="meal_products_search_tab_api">Из API</string>
+    <string name="meal_products_search_tab_api">Из базы</string>
     <string name="meal_products_search_tab_manual">Вручную</string>
     <string name="meal_products_search_result_summary">%1$d ккал/100г · Б %2$s Ж %3$s У %4$s</string>
     <string name="meal_products_search_quick_add_hint">Быстрое добавление: +100 г</string>
@@ -86,6 +86,7 @@
     <string name="meal_products_grams_label">Порция (граммы)</string>
     <string name="meal_products_grams_error">Введите корректное значение больше 0</string>
     <string name="meal_products_add_action">Добавить в прием пищи</string>
+    <string name="meal_products_edit_portion_title">Изменить граммовку</string>
     <string name="meal_products_deleted">Продукт удален</string>
     <string name="diary_nutrition_progress_title">Прогресс за сегодня</string>
     <string name="diary_nutrition_progress_edit">Изменить цели</string>
@@ -95,6 +96,7 @@
     <string name="nutrition_goals_subtitle">Задайте дневные цели для калорий и макронутриентов.</string>
     <string name="nutrition_goals_error">Введите значение больше 0</string>
     <string name="nutrition_goals_save">Сохранить</string>
+    <string name="action_save">Сохранить</string>
     <string name="action_undo">Отменить</string>
     <string name="stats_weekly_summary_subtitle">Сводка за последние 7 дней</string>
     <string name="stats_weekly_summary_empty">За последние 7 дней пока нет записей в дневнике.</string>

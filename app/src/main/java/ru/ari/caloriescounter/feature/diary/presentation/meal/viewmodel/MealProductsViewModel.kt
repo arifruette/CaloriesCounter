@@ -43,6 +43,7 @@ class MealProductsViewModel @Inject constructor(
                 observeEntries()
                 scheduleMidnightDateSwitch()
             }
+            is MealProductsIntent.EntryClicked -> navigateToEntryEdit(intent.entryId)
             is MealProductsIntent.DeleteEntryClicked -> deleteEntry(intent.entryId)
             MealProductsIntent.UndoDeleteClicked -> undoDelete()
             MealProductsIntent.AddProductClicked -> navigateToSearch()
@@ -90,6 +91,20 @@ class MealProductsViewModel @Inject constructor(
     private fun navigateToSearch() {
         viewModelScope.launch {
             emitEffect(MealProductsEffect.NavigateToSearch(state.value.mealType))
+        }
+    }
+
+    private fun navigateToEntryEdit(entryId: Long) {
+        val entry = latestEntries.firstOrNull { it.id == entryId } ?: return
+        viewModelScope.launch {
+            emitEffect(
+                MealProductsEffect.NavigateToEntryEdit(
+                    entryId = entry.id,
+                    mealType = state.value.mealType,
+                    entryName = entry.product.nameRu,
+                    grams = entry.portion.grams,
+                ),
+            )
         }
     }
 

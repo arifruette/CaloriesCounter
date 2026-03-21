@@ -32,6 +32,14 @@ sealed interface AppRoute {
     ) : AppRoute
 
     @Serializable
+    data class MealEntryEditRoute(
+        val entryId: Long,
+        val mealType: String,
+        val entryName: String,
+        val grams: Double,
+    ) : AppRoute
+
+    @Serializable
     data object WeightGoalRoute : AppRoute
 
     @Serializable

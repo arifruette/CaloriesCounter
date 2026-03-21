@@ -56,6 +56,10 @@ class DiaryRepositoryImpl @Inject constructor(
         calorieEntryDao.insertEntry(entry.toEntity())
     }
 
+    override suspend fun updateEntryPortion(entryId: Long, grams: Double) {
+        calorieEntryDao.updatePortionById(entryId, grams)
+    }
+
     override suspend fun removeEntry(entryId: Long) {
         calorieEntryDao.deleteById(entryId)
     }

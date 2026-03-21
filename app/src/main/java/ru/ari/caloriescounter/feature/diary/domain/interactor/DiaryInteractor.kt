@@ -10,5 +10,6 @@ interface DiaryInteractor {
     fun observeDiary(date: LocalDate): Flow<DayDiary>
     fun observeMealEntries(date: LocalDate, mealType: MealType): Flow<List<DiaryEntry>>
     suspend fun addEntry(entry: DiaryEntry)
+    suspend fun updateEntryPortion(entryId: Long, grams: Double)
     suspend fun removeEntry(entryId: Long)
 }

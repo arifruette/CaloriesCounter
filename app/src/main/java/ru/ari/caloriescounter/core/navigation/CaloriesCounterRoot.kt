@@ -38,6 +38,7 @@ import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.diary.DiaryRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.MealProductsRoute
+import ru.ari.caloriescounter.feature.diary.presentation.meal.edit.MealEntryEditRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.details.ProductDetailsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.ProductSearchRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.create.ManualProductCreateRoute
@@ -70,6 +71,7 @@ fun CaloriesCounterRoot() {
             it.hasRoute(AppRoute.MealProductSearchRoute::class) ||
             it.hasRoute(AppRoute.ManualProductCreateRoute::class) ||
             it.hasRoute(AppRoute.MealProductDetailsRoute::class) ||
+            it.hasRoute(AppRoute.MealEntryEditRoute::class) ||
             it.hasRoute(AppRoute.WeightGoalRoute::class) ||
             it.hasRoute(AppRoute.NutritionGoalsRoute::class)
     } != false
@@ -174,6 +176,16 @@ private fun CaloriesCounterNavHost(
                 onNavigateToSearch = { mealType ->
                     navController.navigate(AppRoute.MealProductSearchRoute(mealType = mealType.name))
                 },
+                onNavigateToEntryEdit = { entryId, mealType, entryName, grams ->
+                    navController.navigate(
+                        AppRoute.MealEntryEditRoute(
+                            entryId = entryId,
+                            mealType = mealType.name,
+                            entryName = entryName,
+                            grams = grams,
+                        ),
+                    )
+                },
             )
         }
         composable<AppRoute.MealProductSearchRoute> {
@@ -206,6 +218,13 @@ private fun CaloriesCounterNavHost(
                         inclusive = false,
                     )
                 },
+            )
+        }
+        composable<AppRoute.MealEntryEditRoute> {
+            MealEntryEditRoute(
+                contentPadding = contentPadding,
+                onBackClick = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
             )
         }
         composable<AppRoute.WeightGoalRoute> {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -46,6 +47,7 @@ fun MealProductsScreen(
     snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onDeleteEntryClick: (Long) -> Unit,
+    onEntryClick: (Long) -> Unit,
     onAddProductClick: () -> Unit,
 ) {
     Scaffold(
@@ -119,6 +121,7 @@ fun MealProductsScreen(
             items(state.entries, key = { it.id }) { entry ->
                 MealEntryCard(
                     entry = entry,
+                    onClick = { onEntryClick(entry.id) },
                     onDeleteClick = { onDeleteEntryClick(entry.id) },
                 )
             }
@@ -230,15 +233,18 @@ private fun MealMetricCell(
 @Composable
 private fun MealEntryCard(
     entry: MealEntryUiModel,
+    onClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
     Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = MaterialTheme.shapes.medium,
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,

@@ -20,6 +20,10 @@ class DiaryInteractorImpl @Inject constructor(
         repository.addEntry(entry)
     }
 
+    override suspend fun updateEntryPortion(entryId: Long, grams: Double) {
+        repository.updateEntryPortion(entryId, grams)
+    }
+
     override suspend fun removeEntry(entryId: Long) {
         repository.removeEntry(entryId)
     }

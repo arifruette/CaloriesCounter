@@ -22,6 +22,7 @@ fun MealProductsRoute(
     contentPadding: PaddingValues,
     onBackClick: () -> Unit,
     onNavigateToSearch: (MealType) -> Unit,
+    onNavigateToEntryEdit: (Long, MealType, String, Double) -> Unit,
     viewModel: MealProductsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -37,6 +38,14 @@ fun MealProductsRoute(
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 is MealProductsEffect.NavigateToSearch -> onNavigateToSearch(effect.mealType)
+                is MealProductsEffect.NavigateToEntryEdit -> {
+                    onNavigateToEntryEdit(
+                        effect.entryId,
+                        effect.mealType,
+                        effect.entryName,
+                        effect.grams,
+                    )
+                }
                 MealProductsEffect.ShowUndoDelete -> {
                     val result = snackbarHostState.showSnackbar(
                         message = deletedMessage,
@@ -58,6 +67,9 @@ fun MealProductsRoute(
         onBackClick = onBackClick,
         onDeleteEntryClick = { entryId ->
             viewModel.onIntent(MealProductsIntent.DeleteEntryClicked(entryId))
+        },
+        onEntryClick = { entryId ->
+            viewModel.onIntent(MealProductsIntent.EntryClicked(entryId))
         },
         onAddProductClick = {
             viewModel.onIntent(MealProductsIntent.AddProductClicked)

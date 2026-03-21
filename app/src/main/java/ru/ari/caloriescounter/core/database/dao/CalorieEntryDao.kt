@@ -32,6 +32,9 @@ interface CalorieEntryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEntry(entry: CalorieEntryEntity)
 
+    @Query("UPDATE calorie_entries SET portionGrams = :grams WHERE id = :entryId")
+    suspend fun updatePortionById(entryId: Long, grams: Double)
+
     @Query("DELETE FROM calorie_entries WHERE id = :entryId")
     suspend fun deleteById(entryId: Long)
 }

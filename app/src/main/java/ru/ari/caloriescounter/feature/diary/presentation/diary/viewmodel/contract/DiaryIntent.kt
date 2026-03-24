@@ -12,4 +12,5 @@ sealed interface DiaryIntent : UiIntent {
     data object IncreaseCurrentWeightFast : DiaryIntent
     data object WeightCardClicked : DiaryIntent
     data object NutritionGoalsClicked : DiaryIntent
+    data object UserProfileClicked : DiaryIntent
 }

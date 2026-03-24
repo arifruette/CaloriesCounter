@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <style name="Base.Theme.CaloriesCounter" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/app_primary</item>
         <item name="colorOnPrimary">@color/app_on_surface</item>
@@ -8,5 +8,11 @@
         <item name="colorSurface">@color/app_surface</item>
         <item name="android:windowBackground">@color/app_background</item>
         <item name="fontFamily">@font/inter</item>
+    </style>
+
+    <style name="Theme.CaloriesCounter.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/app_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.CaloriesCounter</item>
     </style>
 </resources>

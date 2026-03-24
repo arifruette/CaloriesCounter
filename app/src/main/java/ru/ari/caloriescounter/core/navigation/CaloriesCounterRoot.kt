@@ -35,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import ru.ari.caloriescounter.R
+import ru.ari.caloriescounter.core.navigation.launchgate.LaunchGateRoute
 import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.diary.DiaryRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.MealProductsRoute
@@ -44,6 +45,7 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.search.ProductSear
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.create.ManualProductCreateRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchItemUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.NutritionGoalsRoute
+import ru.ari.caloriescounter.feature.diary.presentation.userprofile.UserProfileRoute
 import ru.ari.caloriescounter.feature.diary.presentation.weight.WeightGoalRoute
 import ru.ari.caloriescounter.feature.stats.presentation.StatsRoute
 
@@ -59,7 +61,9 @@ private val topLevelDestinations = listOf(
 )
 
 @Composable
-fun CaloriesCounterRoot() {
+fun CaloriesCounterRoot(
+    onStartupResolved: () -> Unit = {},
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -73,7 +77,10 @@ fun CaloriesCounterRoot() {
             it.hasRoute(AppRoute.MealProductDetailsRoute::class) ||
             it.hasRoute(AppRoute.MealEntryEditRoute::class) ||
             it.hasRoute(AppRoute.WeightGoalRoute::class) ||
-            it.hasRoute(AppRoute.NutritionGoalsRoute::class)
+            it.hasRoute(AppRoute.NutritionGoalsRoute::class) ||
+            it.hasRoute(AppRoute.OnboardingRoute::class) ||
+            it.hasRoute(AppRoute.UserProfileRoute::class) ||
+            it.hasRoute(AppRoute.LaunchRoute::class)
     } != false
     val bottomInsetPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
         .asPaddingValues()
@@ -90,6 +97,7 @@ fun CaloriesCounterRoot() {
                 contentPadding = innerPadding.withBottomPadding(
                     extraBottom = if (isTopLevelDestination) bottomBarExtraPadding else 0.dp,
                 ),
+                onStartupResolved = onStartupResolved,
             )
 
             if (showBottomBar) {
@@ -146,12 +154,40 @@ fun CaloriesCounterRoot() {
 private fun CaloriesCounterNavHost(
     navController: androidx.navigation.NavHostController,
     contentPadding: PaddingValues,
+    onStartupResolved: () -> Unit,
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppRoute.DiaryRoute,
+        startDestination = AppRoute.LaunchRoute,
         modifier = Modifier.fillMaxSize(),
     ) {
+        composable<AppRoute.LaunchRoute> {
+            LaunchGateRoute(
+                onNavigateToOnboarding = {
+                    navController.navigate(AppRoute.OnboardingRoute) {
+                        popUpTo(AppRoute.LaunchRoute) { inclusive = true }
+                    }
+                },
+                onNavigateToDiary = {
+                    navController.navigate(AppRoute.DiaryRoute) {
+                        popUpTo(AppRoute.LaunchRoute) { inclusive = true }
+                    }
+                },
+                onStartupResolved = onStartupResolved,
+            )
+        }
+        composable<AppRoute.OnboardingRoute> {
+            UserProfileRoute(
+                contentPadding = contentPadding,
+                isOnboarding = true,
+                onBackClick = null,
+                onSaved = {
+                    navController.navigate(AppRoute.DiaryRoute) {
+                        popUpTo(AppRoute.OnboardingRoute) { inclusive = true }
+                    }
+                },
+            )
+        }
         composable<AppRoute.DiaryRoute> {
             DiaryRoute(
                 contentPadding = contentPadding,
@@ -163,6 +199,9 @@ private fun CaloriesCounterNavHost(
                 },
                 onNavigateToNutritionGoals = {
                     navController.navigate(AppRoute.NutritionGoalsRoute)
+                },
+                onNavigateToUserProfile = {
+                    navController.navigate(AppRoute.UserProfileRoute)
                 },
             )
         }
@@ -237,6 +276,14 @@ private fun CaloriesCounterNavHost(
             NutritionGoalsRoute(
                 contentPadding = contentPadding,
                 onBackClick = { navController.popBackStack() },
+            )
+        }
+        composable<AppRoute.UserProfileRoute> {
+            UserProfileRoute(
+                contentPadding = contentPadding,
+                isOnboarding = false,
+                onBackClick = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
             )
         }
     }

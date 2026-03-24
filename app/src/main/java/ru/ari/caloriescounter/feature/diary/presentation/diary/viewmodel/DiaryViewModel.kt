@@ -62,6 +62,7 @@ class DiaryViewModel @Inject constructor(
             DiaryIntent.IncreaseCurrentWeightFast -> updateCurrentWeight(WEIGHT_LONG_PRESS_STEP_KG)
             DiaryIntent.WeightCardClicked -> navigateToWeightGoal()
             DiaryIntent.NutritionGoalsClicked -> navigateToNutritionGoals()
+            DiaryIntent.UserProfileClicked -> navigateToUserProfile()
         }
     }
 
@@ -142,6 +143,12 @@ class DiaryViewModel @Inject constructor(
     private fun navigateToNutritionGoals() {
         viewModelScope.launch {
             emitEffect(DiaryEffect.NavigateToNutritionGoals)
+        }
+    }
+
+    private fun navigateToUserProfile() {
+        viewModelScope.launch {
+            emitEffect(DiaryEffect.NavigateToUserProfile)
         }
     }
 

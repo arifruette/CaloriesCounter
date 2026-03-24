@@ -89,11 +89,6 @@ fun NutritionGoalsScreen(
                 ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = stringResource(R.string.nutrition_goals_subtitle),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
             OutlinedTextField(
                 value = state.caloriesInput,
                 onValueChange = onCaloriesChanged,

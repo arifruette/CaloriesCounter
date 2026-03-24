@@ -80,18 +80,11 @@ fun StatsWeeklySummaryContent(
 
 @Composable
 private fun ScreenHeader() {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = stringResource(R.string.screen_stats),
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-        Text(
-            text = stringResource(R.string.stats_weekly_summary_subtitle),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+    Text(
+        text = stringResource(R.string.screen_stats),
+        style = MaterialTheme.typography.headlineLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+    )
 }
 
 @Composable

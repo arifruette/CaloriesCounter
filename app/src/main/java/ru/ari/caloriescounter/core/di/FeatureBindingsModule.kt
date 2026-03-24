@@ -10,10 +10,12 @@ import ru.ari.caloriescounter.feature.diary.data.ManualProductRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.NutritionGoalsRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.ProductSearchRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.data.WeightProfileRepositoryImpl
+import ru.ari.caloriescounter.feature.diary.data.UserProfileRepositoryImpl
 import ru.ari.caloriescounter.feature.diary.domain.DiaryRepository
 import ru.ari.caloriescounter.feature.diary.domain.ManualProductRepository
 import ru.ari.caloriescounter.feature.diary.domain.NutritionGoalsRepository
 import ru.ari.caloriescounter.feature.diary.domain.ProductSearchRepository
+import ru.ari.caloriescounter.feature.diary.domain.UserProfileRepository
 import ru.ari.caloriescounter.feature.diary.domain.WeightProfileRepository
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractorImpl
@@ -25,6 +27,8 @@ import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInter
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractorImpl
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractorImpl
+import ru.ari.caloriescounter.feature.diary.domain.interactor.UserProfileInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.UserProfileInteractorImpl
 import ru.ari.caloriescounter.feature.stats.data.StatsRepositoryImpl
 import ru.ari.caloriescounter.feature.stats.domain.StatsRepository
 import ru.ari.caloriescounter.feature.stats.domain.interactor.StatsInteractor
@@ -60,6 +64,10 @@ abstract class FeatureBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindUserProfileRepository(impl: UserProfileRepositoryImpl): UserProfileRepository
+
+    @Binds
+    @Singleton
     abstract fun bindDiaryInteractor(impl: DiaryInteractorImpl): DiaryInteractor
 
     @Binds
@@ -81,4 +89,8 @@ abstract class FeatureBindingsModule {
     @Binds
     @Singleton
     abstract fun bindManualProductInteractor(impl: ManualProductInteractorImpl): ManualProductInteractor
+
+    @Binds
+    @Singleton
+    abstract fun bindUserProfileInteractor(impl: UserProfileInteractorImpl): UserProfileInteractor
 }

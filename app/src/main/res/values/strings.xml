@@ -8,8 +8,7 @@
     <string name="screen_stats">Статистика</string>
     <string name="screen_meal_products">Добавление продуктов</string>
 
-    <string name="diary_subtitle">Выберите прием пищи, чтобы добавить блюда.</string>
-    <string name="route_stats">Маршрут: статистика</string>
+    <string name="diary_open_profile">Заполнить профиль</string>
 
     <string name="meal_breakfast">Завтрак</string>
     <string name="meal_lunch">Обед</string>
@@ -95,12 +94,31 @@
     <string name="diary_nutrition_progress_excess_kcal">+%1$d ккал</string>
     <string name="diary_nutrition_progress_excess_grams">+%1$s г</string>
     <string name="screen_nutrition_goals">Цели КБЖУ</string>
-    <string name="nutrition_goals_subtitle">Задайте дневные цели для калорий и макронутриентов.</string>
+    <string name="profile_title">Профиль</string>
+    <string name="onboarding_profile_title">Давайте настроим ваш профиль</string>
+    <string name="onboarding_profile_continue">Сохранить и продолжить</string>
+    <string name="profile_field_sex">Пол</string>
+    <string name="profile_field_age">Возраст (лет)</string>
+    <string name="profile_field_height">Рост (см)</string>
+    <string name="profile_field_current_weight">Текущий вес (кг)</string>
+    <string name="profile_field_target_weight">Целевой вес (кг)</string>
+    <string name="profile_field_activity">Уровень активности</string>
+    <string name="profile_field_goal">Цель</string>
+    <string name="profile_sex_male">Мужской</string>
+    <string name="profile_sex_female">Женский</string>
+    <string name="profile_activity_sedentary">Минимальная активность</string>
+    <string name="profile_activity_light">Низкая активность</string>
+    <string name="profile_activity_moderate">Умеренная активность</string>
+    <string name="profile_activity_high">Высокая активность</string>
+    <string name="profile_activity_very_high">Очень высокая активность</string>
+    <string name="profile_goal_lose">Снижение веса</string>
+    <string name="profile_goal_maintain">Поддержание веса</string>
+    <string name="profile_goal_gain">Набор веса</string>
+    <string name="profile_validation_error">Проверьте поля: заполните все значения в допустимых диапазонах.</string>
     <string name="nutrition_goals_error">Введите значение больше 0</string>
     <string name="nutrition_goals_save">Сохранить</string>
     <string name="action_save">Сохранить</string>
     <string name="action_undo">Отменить</string>
-    <string name="stats_weekly_summary_subtitle">Сводка за последние 7 дней</string>
     <string name="stats_weekly_summary_empty">За последние 7 дней пока нет записей в дневнике.</string>
     <string name="stats_metric_avg_calories_title">Средние калории в день</string>
     <string name="stats_metric_avg_calories_value">%1$d ккал</string>

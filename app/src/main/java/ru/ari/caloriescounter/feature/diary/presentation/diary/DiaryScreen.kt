@@ -31,6 +31,7 @@ fun DiaryScreen(
     onIncreaseCurrentWeightFast: () -> Unit,
     onWeightCardClick: () -> Unit,
     onNutritionGoalsClick: () -> Unit,
+    onUserProfileClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -43,7 +44,7 @@ fun DiaryScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
-            DiaryHeader()
+            DiaryHeader(onProfileClick = onUserProfileClick)
         }
         item {
             WeightCard(

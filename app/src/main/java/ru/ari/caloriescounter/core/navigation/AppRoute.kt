@@ -4,6 +4,9 @@ import kotlinx.serialization.Serializable
 
 sealed interface AppRoute {
     @Serializable
+    data object LaunchRoute : AppRoute
+
+    @Serializable
     data object DiaryRoute : AppRoute
 
     @Serializable
@@ -44,4 +47,10 @@ sealed interface AppRoute {
 
     @Serializable
     data object NutritionGoalsRoute : AppRoute
+
+    @Serializable
+    data object OnboardingRoute : AppRoute
+
+    @Serializable
+    data object UserProfileRoute : AppRoute
 }

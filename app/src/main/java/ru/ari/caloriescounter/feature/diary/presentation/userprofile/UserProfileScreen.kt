@@ -47,9 +47,12 @@ fun UserProfileScreen(
     contentPadding: PaddingValues,
     isOnboarding: Boolean,
     onBackClick: (() -> Unit)?,
+    onFirstNameChanged: (String) -> Unit,
+    onLastNameChanged: (String) -> Unit,
     onSexSelected: (UserSex) -> Unit,
     onAgeChanged: (String) -> Unit,
     onHeightChanged: (String) -> Unit,
+    onInitialWeightChanged: (String) -> Unit,
     onCurrentWeightChanged: (String) -> Unit,
     onTargetWeightChanged: (String) -> Unit,
     onActivityLevelSelected: (ActivityLevel) -> Unit,
@@ -127,9 +130,12 @@ fun UserProfileScreen(
                     ) {
                         ProfilePrimaryFields(
                             state = state,
+                            onFirstNameChanged = onFirstNameChanged,
+                            onLastNameChanged = onLastNameChanged,
                             onSexSelected = onSexSelected,
                             onAgeChanged = onAgeChanged,
                             onHeightChanged = onHeightChanged,
+                            onInitialWeightChanged = onInitialWeightChanged,
                             onCurrentWeightChanged = onCurrentWeightChanged,
                             onTargetWeightChanged = onTargetWeightChanged,
                         )
@@ -155,9 +161,12 @@ fun UserProfileScreen(
             } else {
                 ProfilePrimaryFields(
                     state = state,
+                    onFirstNameChanged = onFirstNameChanged,
+                    onLastNameChanged = onLastNameChanged,
                     onSexSelected = onSexSelected,
                     onAgeChanged = onAgeChanged,
                     onHeightChanged = onHeightChanged,
+                    onInitialWeightChanged = onInitialWeightChanged,
                     onCurrentWeightChanged = onCurrentWeightChanged,
                     onTargetWeightChanged = onTargetWeightChanged,
                 )
@@ -198,12 +207,33 @@ fun UserProfileScreen(
 @Composable
 private fun ProfilePrimaryFields(
     state: UserProfileState,
+    onFirstNameChanged: (String) -> Unit,
+    onLastNameChanged: (String) -> Unit,
     onSexSelected: (UserSex) -> Unit,
     onAgeChanged: (String) -> Unit,
     onHeightChanged: (String) -> Unit,
+    onInitialWeightChanged: (String) -> Unit,
     onCurrentWeightChanged: (String) -> Unit,
     onTargetWeightChanged: (String) -> Unit,
 ) {
+    OutlinedTextField(
+        value = state.firstNameInput,
+        onValueChange = onFirstNameChanged,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(stringResource(R.string.profile_field_first_name)) },
+        isError = state.showValidationErrors && state.firstNameInput.trim().isEmpty(),
+        singleLine = true,
+    )
+
+    OutlinedTextField(
+        value = state.lastNameInput,
+        onValueChange = onLastNameChanged,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(stringResource(R.string.profile_field_last_name)) },
+        isError = state.showValidationErrors && state.lastNameInput.trim().isEmpty(),
+        singleLine = true,
+    )
+
     SelectionGroup(
         title = stringResource(R.string.profile_field_sex),
         options = UserSex.entries,
@@ -229,6 +259,17 @@ private fun ProfilePrimaryFields(
         label = { Text(stringResource(R.string.profile_field_height)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         isError = state.showValidationErrors && state.heightInput.toIntOrNull()?.let { it in 120..250 } != true,
+        singleLine = true,
+    )
+
+    OutlinedTextField(
+        value = state.initialWeightInput,
+        onValueChange = onInitialWeightChanged,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(stringResource(R.string.profile_field_initial_weight)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+        isError = state.showValidationErrors &&
+            state.initialWeightInput.replace(',', '.').toDoubleOrNull()?.let { it in 30.0..300.0 } != true,
         singleLine = true,
     )
 

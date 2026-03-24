@@ -8,13 +8,15 @@ import ru.ari.caloriescounter.feature.diary.domain.model.profile.UserSex
 data class UserProfileState(
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
+    val firstNameInput: String = "",
+    val lastNameInput: String = "",
     val sex: UserSex? = null,
     val ageInput: String = "",
     val heightInput: String = "",
+    val initialWeightInput: String = "",
     val currentWeightInput: String = "",
     val targetWeightInput: String = "",
     val activityLevel: ActivityLevel = ActivityLevel.Moderate,
     val goalType: GoalType = GoalType.Maintain,
     val showValidationErrors: Boolean = false,
 ) : UiState
-

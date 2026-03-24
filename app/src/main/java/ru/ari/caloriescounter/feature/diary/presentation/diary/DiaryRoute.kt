@@ -15,9 +15,7 @@ import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contrac
 fun DiaryRoute(
     contentPadding: PaddingValues,
     onNavigateToMealProducts: (MealType) -> Unit,
-    onNavigateToWeightGoal: () -> Unit,
     onNavigateToNutritionGoals: () -> Unit,
-    onNavigateToUserProfile: () -> Unit,
     viewModel: DiaryViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -30,9 +28,7 @@ fun DiaryRoute(
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 is DiaryEffect.NavigateToMealProducts -> onNavigateToMealProducts(effect.mealType)
-                DiaryEffect.NavigateToWeightGoal -> onNavigateToWeightGoal()
                 DiaryEffect.NavigateToNutritionGoals -> onNavigateToNutritionGoals()
-                DiaryEffect.NavigateToUserProfile -> onNavigateToUserProfile()
             }
         }
     }
@@ -41,12 +37,10 @@ fun DiaryRoute(
         state = state.value,
         contentPadding = contentPadding,
         onMealClick = { mealType -> viewModel.onIntent(DiaryIntent.MealClicked(mealType)) },
+        onNutritionGoalsClick = { viewModel.onIntent(DiaryIntent.NutritionGoalsClicked) },
         onDecreaseCurrentWeight = { viewModel.onIntent(DiaryIntent.DecreaseCurrentWeight) },
         onIncreaseCurrentWeight = { viewModel.onIntent(DiaryIntent.IncreaseCurrentWeight) },
         onDecreaseCurrentWeightFast = { viewModel.onIntent(DiaryIntent.DecreaseCurrentWeightFast) },
         onIncreaseCurrentWeightFast = { viewModel.onIntent(DiaryIntent.IncreaseCurrentWeightFast) },
-        onWeightCardClick = { viewModel.onIntent(DiaryIntent.WeightCardClicked) },
-        onNutritionGoalsClick = { viewModel.onIntent(DiaryIntent.NutritionGoalsClicked) },
-        onUserProfileClick = { viewModel.onIntent(DiaryIntent.UserProfileClicked) },
     )
 }

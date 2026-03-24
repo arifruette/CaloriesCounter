@@ -37,9 +37,12 @@ fun UserProfileRoute(
         contentPadding = contentPadding,
         isOnboarding = isOnboarding,
         onBackClick = onBackClick,
+        onFirstNameChanged = { viewModel.onIntent(UserProfileIntent.FirstNameChanged(it)) },
+        onLastNameChanged = { viewModel.onIntent(UserProfileIntent.LastNameChanged(it)) },
         onSexSelected = { viewModel.onIntent(UserProfileIntent.SexSelected(it)) },
         onAgeChanged = { viewModel.onIntent(UserProfileIntent.AgeChanged(it)) },
         onHeightChanged = { viewModel.onIntent(UserProfileIntent.HeightChanged(it)) },
+        onInitialWeightChanged = { viewModel.onIntent(UserProfileIntent.InitialWeightChanged(it)) },
         onCurrentWeightChanged = { viewModel.onIntent(UserProfileIntent.CurrentWeightChanged(it)) },
         onTargetWeightChanged = { viewModel.onIntent(UserProfileIntent.TargetWeightChanged(it)) },
         onActivityLevelSelected = { viewModel.onIntent(UserProfileIntent.ActivityLevelSelected(it)) },
@@ -47,4 +50,3 @@ fun UserProfileRoute(
         onSaveClick = { viewModel.onIntent(UserProfileIntent.SaveClicked) },
     )
 }
-

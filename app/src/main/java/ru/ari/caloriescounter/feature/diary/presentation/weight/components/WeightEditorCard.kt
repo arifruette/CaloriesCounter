@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.feature.diary.presentation.common.WeightAdjustmentButton
@@ -22,6 +23,9 @@ import ru.ari.caloriescounter.feature.diary.presentation.common.formatRuDecimal
 fun WeightEditorCard(
     label: String,
     value: Double,
+    topCenteredText: String? = null,
+    supportingText: String? = null,
+    centerLabel: Boolean = true,
     decrementContentDescription: String,
     incrementContentDescription: String,
     onDecrease: () -> Unit,
@@ -38,12 +42,24 @@ fun WeightEditorCard(
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = label,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = if (centerLabel) TextAlign.Center else TextAlign.Start,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
+            if (!topCenteredText.isNullOrBlank()) {
+                Text(
+                    text = topCenteredText,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -67,6 +83,15 @@ fun WeightEditorCard(
                     onTap = onIncrease,
                     onLongPressStep = onIncreaseFast,
                     size = 48.dp,
+                )
+            }
+            if (!supportingText.isNullOrBlank()) {
+                Text(
+                    text = supportingText,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

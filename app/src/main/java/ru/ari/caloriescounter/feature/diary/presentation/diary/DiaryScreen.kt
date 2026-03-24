@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.diary.components.DiaryHeader
+import ru.ari.caloriescounter.feature.diary.presentation.diary.components.DiaryWeightCard
 import ru.ari.caloriescounter.feature.diary.presentation.diary.components.MealCard
 import ru.ari.caloriescounter.feature.diary.presentation.diary.components.NutritionProgressCard
-import ru.ari.caloriescounter.feature.diary.presentation.diary.components.WeightCard
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contract.DiaryState
 
 @Composable
@@ -25,13 +25,11 @@ fun DiaryScreen(
     state: DiaryState,
     contentPadding: PaddingValues,
     onMealClick: (MealType) -> Unit,
+    onNutritionGoalsClick: () -> Unit,
     onDecreaseCurrentWeight: () -> Unit,
     onIncreaseCurrentWeight: () -> Unit,
     onDecreaseCurrentWeightFast: () -> Unit,
     onIncreaseCurrentWeightFast: () -> Unit,
-    onWeightCardClick: () -> Unit,
-    onNutritionGoalsClick: () -> Unit,
-    onUserProfileClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -44,22 +42,22 @@ fun DiaryScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
-            DiaryHeader(onProfileClick = onUserProfileClick)
-        }
-        item {
-            WeightCard(
-                card = state.weightCard,
-                onDecreaseCurrentWeight = onDecreaseCurrentWeight,
-                onIncreaseCurrentWeight = onIncreaseCurrentWeight,
-                onDecreaseCurrentWeightFast = onDecreaseCurrentWeightFast,
-                onIncreaseCurrentWeightFast = onIncreaseCurrentWeightFast,
-                onClick = onWeightCardClick,
-            )
+            DiaryHeader()
         }
         item {
             NutritionProgressCard(
                 card = state.nutritionProgressCard,
                 onEditGoalsClick = onNutritionGoalsClick,
+            )
+        }
+        item {
+            DiaryWeightCard(
+                currentWeightKg = state.currentWeightKg,
+                targetWeightKg = state.targetWeightKg,
+                onDecreaseCurrentWeight = onDecreaseCurrentWeight,
+                onIncreaseCurrentWeight = onIncreaseCurrentWeight,
+                onDecreaseCurrentWeightFast = onDecreaseCurrentWeightFast,
+                onIncreaseCurrentWeightFast = onIncreaseCurrentWeightFast,
             )
         }
         if (state.isLoading) {

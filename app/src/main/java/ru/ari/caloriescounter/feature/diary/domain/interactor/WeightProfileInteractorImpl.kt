@@ -11,6 +11,18 @@ class WeightProfileInteractorImpl @Inject constructor(
 
     override fun observeWeightProfile(): Flow<WeightProfile> = repository.observeWeightProfile()
 
+    override suspend fun initializeWeightProfile(
+        initialWeightKg: Double,
+        currentWeightKg: Double,
+        targetWeightKg: Double,
+    ) {
+        repository.initializeWeightProfile(initialWeightKg, currentWeightKg, targetWeightKg)
+    }
+
+    override suspend fun updateInitialWeight(weightKg: Double) {
+        repository.updateInitialWeight(weightKg)
+    }
+
     override suspend fun updateCurrentWeight(weightKg: Double) {
         repository.updateCurrentWeight(weightKg)
     }

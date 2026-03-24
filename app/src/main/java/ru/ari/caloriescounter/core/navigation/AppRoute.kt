@@ -13,6 +13,9 @@ sealed interface AppRoute {
     data object StatsRoute : AppRoute
 
     @Serializable
+    data object ProfileRoute : AppRoute
+
+    @Serializable
     data class MealProductsRoute(val mealType: String) : AppRoute
 
     @Serializable
@@ -41,9 +44,6 @@ sealed interface AppRoute {
         val entryName: String,
         val grams: Double,
     ) : AppRoute
-
-    @Serializable
-    data object WeightGoalRoute : AppRoute
 
     @Serializable
     data object NutritionGoalsRoute : AppRoute

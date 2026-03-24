@@ -5,6 +5,12 @@ import ru.ari.caloriescounter.feature.diary.domain.model.weight.WeightProfile
 
 interface WeightProfileRepository {
     fun observeWeightProfile(): Flow<WeightProfile>
+    suspend fun initializeWeightProfile(
+        initialWeightKg: Double,
+        currentWeightKg: Double,
+        targetWeightKg: Double,
+    )
+    suspend fun updateInitialWeight(weightKg: Double)
     suspend fun updateCurrentWeight(weightKg: Double)
     suspend fun updateTargetWeight(weightKg: Double)
 }

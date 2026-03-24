@@ -21,7 +21,6 @@ import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contrac
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.DiaryMacroProgressUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.DiaryNutritionProgressCardUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.MealCardUiModel
-import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.WeightCardUiModel
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
@@ -56,13 +55,11 @@ class DiaryViewModel @Inject constructor(
                 scheduleMidnightDateSwitch()
             }
             is DiaryIntent.MealClicked -> navigateToMeal(intent.mealType)
+            DiaryIntent.NutritionGoalsClicked -> navigateToNutritionGoals()
             DiaryIntent.DecreaseCurrentWeight -> updateCurrentWeight(-WEIGHT_STEP_KG)
             DiaryIntent.IncreaseCurrentWeight -> updateCurrentWeight(WEIGHT_STEP_KG)
             DiaryIntent.DecreaseCurrentWeightFast -> updateCurrentWeight(-WEIGHT_LONG_PRESS_STEP_KG)
             DiaryIntent.IncreaseCurrentWeightFast -> updateCurrentWeight(WEIGHT_LONG_PRESS_STEP_KG)
-            DiaryIntent.WeightCardClicked -> navigateToWeightGoal()
-            DiaryIntent.NutritionGoalsClicked -> navigateToNutritionGoals()
-            DiaryIntent.UserProfileClicked -> navigateToUserProfile()
         }
     }
 
@@ -104,12 +101,6 @@ class DiaryViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToMeal(mealType: MealType) {
-        viewModelScope.launch {
-            emitEffect(DiaryEffect.NavigateToMealProducts(mealType))
-        }
-    }
-
     private fun observeWeightProfile() {
         if (observeWeightJob != null) return
 
@@ -117,26 +108,17 @@ class DiaryViewModel @Inject constructor(
             weightProfileInteractor.observeWeightProfile().collect { profile ->
                 updateState {
                     copy(
-                        weightCard = WeightCardUiModel(
-                            currentWeightKg = profile.currentWeightKg,
-                            targetWeightKg = profile.targetWeightKg,
-                        ),
+                        currentWeightKg = profile.currentWeightKg,
+                        targetWeightKg = profile.targetWeightKg,
                     )
                 }
             }
         }
     }
 
-    private fun updateCurrentWeight(delta: Double) {
-        val updatedWeight = state.value.weightCard.currentWeightKg + delta
+    private fun navigateToMeal(mealType: MealType) {
         viewModelScope.launch {
-            weightProfileInteractor.updateCurrentWeight(updatedWeight)
-        }
-    }
-
-    private fun navigateToWeightGoal() {
-        viewModelScope.launch {
-            emitEffect(DiaryEffect.NavigateToWeightGoal)
+            emitEffect(DiaryEffect.NavigateToMealProducts(mealType))
         }
     }
 
@@ -146,9 +128,10 @@ class DiaryViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToUserProfile() {
+    private fun updateCurrentWeight(delta: Double) {
+        val updatedWeight = state.value.currentWeightKg + delta
         viewModelScope.launch {
-            emitEffect(DiaryEffect.NavigateToUserProfile)
+            weightProfileInteractor.updateCurrentWeight(updatedWeight)
         }
     }
 

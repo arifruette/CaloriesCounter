@@ -3,12 +3,11 @@
 
     <string name="tab_diary">Дневник</string>
     <string name="tab_stats">Статистика</string>
+    <string name="tab_profile">Профиль</string>
 
     <string name="screen_diary">Дневник</string>
     <string name="screen_stats">Статистика</string>
     <string name="screen_meal_products">Добавление продуктов</string>
-
-    <string name="diary_open_profile">Заполнить профиль</string>
 
     <string name="meal_breakfast">Завтрак</string>
     <string name="meal_lunch">Обед</string>
@@ -95,11 +94,30 @@
     <string name="diary_nutrition_progress_excess_grams">+%1$s г</string>
     <string name="screen_nutrition_goals">Цели КБЖУ</string>
     <string name="profile_title">Профиль</string>
+    <string name="profile_hub_main_parameters_title">Основные параметры</string>
+    <string name="profile_hub_main_parameters_description">Имя, пол, возраст, рост, активность и цель.</string>
+    <string name="profile_hub_main_parameters_preview">%1$s, %2$d лет, %3$d см · %4$s · %5$s</string>
+    <string name="profile_hub_weight_goal_title">Вес и цель</string>
+    <string name="profile_hub_weight_goal_description">Начальный, текущий и целевой вес.</string>
+    <string name="profile_remaining_calories">Осталось %1$d ккал</string>
+    <string name="profile_calories_progress">%1$d / %2$d ккал за сегодня</string>
+    <string name="profile_weight_progress_title">Прогресс по весу</string>
+    <string name="profile_weight_start">Старт</string>
+    <string name="profile_weight_current">Текущий</string>
+    <string name="profile_weight_target">Цель</string>
+    <string name="profile_weight_change_from_start">Изменение от старта: %1$s кг</string>
+    <string name="profile_weight_remaining_lose">До цели похудения осталось: %1$s кг</string>
+    <string name="profile_weight_remaining_gain">До цели набора осталось: %1$s кг</string>
+    <string name="profile_weight_remaining_maintain">Режим поддержания веса</string>
+    <string name="profile_user_fallback_name">Пользователь</string>
     <string name="onboarding_profile_title">Давайте настроим ваш профиль</string>
     <string name="onboarding_profile_continue">Сохранить и продолжить</string>
+    <string name="profile_field_first_name">Имя</string>
+    <string name="profile_field_last_name">Фамилия</string>
     <string name="profile_field_sex">Пол</string>
     <string name="profile_field_age">Возраст (лет)</string>
     <string name="profile_field_height">Рост (см)</string>
+    <string name="profile_field_initial_weight">Начальный вес (кг)</string>
     <string name="profile_field_current_weight">Текущий вес (кг)</string>
     <string name="profile_field_target_weight">Целевой вес (кг)</string>
     <string name="profile_field_activity">Уровень активности</string>
@@ -117,6 +135,7 @@
     <string name="profile_validation_error">Проверьте поля: заполните все значения в допустимых диапазонах.</string>
     <string name="nutrition_goals_error">Введите значение больше 0</string>
     <string name="nutrition_goals_save">Сохранить</string>
+    <string name="action_edit">Изменить</string>
     <string name="action_save">Сохранить</string>
     <string name="action_undo">Отменить</string>
     <string name="stats_weekly_summary_empty">За последние 7 дней пока нет записей в дневнике.</string>

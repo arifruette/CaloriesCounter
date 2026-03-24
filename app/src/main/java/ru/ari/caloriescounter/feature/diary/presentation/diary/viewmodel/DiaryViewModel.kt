@@ -1,4 +1,4 @@
-package ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel
+﻿package ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +13,7 @@ import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.NutritionGoalsInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.diary.DayDiary
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
+import ru.ari.caloriescounter.feature.diary.domain.model.diary.DeletedMealPayload
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionGoals
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contract.DiaryEffect
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.contract.DiaryIntent
@@ -38,13 +38,14 @@ class DiaryViewModel @Inject constructor(
     private var latestDayDiary = DayDiary(
         date = observedDate,
         entries = emptyList(),
-        mealSummaries = emptyMap(),
+        mealSummaries = emptyList(),
         totalCalories = 0.0,
         totalProtein = 0.0,
         totalFat = 0.0,
         totalCarbs = 0.0,
     )
     private var latestGoals = defaultNutritionGoals
+    private var pendingDeletedMeal: DeletedMealPayload? = null
 
     override fun onIntent(intent: DiaryIntent) {
         when (intent) {
@@ -54,8 +55,23 @@ class DiaryViewModel @Inject constructor(
                 observeWeightProfile()
                 scheduleMidnightDateSwitch()
             }
-            is DiaryIntent.MealClicked -> navigateToMeal(intent.mealType)
+            is DiaryIntent.MealClicked -> navigateToMeal(intent.mealKey, intent.mealTitle)
             DiaryIntent.NutritionGoalsClicked -> navigateToNutritionGoals()
+            is DiaryIntent.NewMealTitleChanged -> updateState { copy(newMealTitleInput = intent.value) }
+            DiaryIntent.AddMealClicked -> addMeal()
+            is DiaryIntent.RenameMealClicked -> {
+                updateState {
+                    copy(
+                        editingMealKey = intent.mealKey,
+                        editingMealTitleInput = intent.currentTitle,
+                    )
+                }
+            }
+            is DiaryIntent.EditingMealTitleChanged -> updateState { copy(editingMealTitleInput = intent.value) }
+            DiaryIntent.ConfirmRenameMealClicked -> confirmRenameMeal()
+            DiaryIntent.DismissRenameMealClicked -> dismissRenameMeal()
+            is DiaryIntent.DeleteMealClicked -> deleteMeal(intent.mealKey)
+            DiaryIntent.UndoDeleteMealClicked -> undoDeleteMeal()
             DiaryIntent.DecreaseCurrentWeight -> updateCurrentWeight(-WEIGHT_STEP_KG)
             DiaryIntent.IncreaseCurrentWeight -> updateCurrentWeight(WEIGHT_STEP_KG)
             DiaryIntent.DecreaseCurrentWeightFast -> updateCurrentWeight(-WEIGHT_LONG_PRESS_STEP_KG)
@@ -116,9 +132,57 @@ class DiaryViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToMeal(mealType: MealType) {
+    private fun addMeal() {
+        val title = state.value.newMealTitleInput
         viewModelScope.launch {
-            emitEffect(DiaryEffect.NavigateToMealProducts(mealType))
+            interactor.addCustomMealSlot(observedDate, title)
+            updateState { copy(newMealTitleInput = "") }
+        }
+    }
+
+    private fun confirmRenameMeal() {
+        val mealKey = state.value.editingMealKey ?: return
+        val title = state.value.editingMealTitleInput
+        viewModelScope.launch {
+            interactor.renameMealSlot(observedDate, mealKey, title)
+            updateState {
+                copy(
+                    editingMealKey = null,
+                    editingMealTitleInput = "",
+                )
+            }
+        }
+    }
+
+    private fun dismissRenameMeal() {
+        updateState {
+            copy(
+                editingMealKey = null,
+                editingMealTitleInput = "",
+            )
+        }
+    }
+
+    private fun deleteMeal(mealKey: String) {
+        viewModelScope.launch {
+            pendingDeletedMeal = interactor.deleteMealSlotWithEntries(observedDate, mealKey)
+            if (pendingDeletedMeal != null) {
+                emitEffect(DiaryEffect.ShowUndoDeleteMeal)
+            }
+        }
+    }
+
+    private fun undoDeleteMeal() {
+        val payload = pendingDeletedMeal ?: return
+        viewModelScope.launch {
+            interactor.restoreDeletedMeal(payload)
+            pendingDeletedMeal = null
+        }
+    }
+
+    private fun navigateToMeal(mealKey: String, mealTitle: String) {
+        viewModelScope.launch {
+            emitEffect(DiaryEffect.NavigateToMealProducts(mealKey = mealKey, mealTitle = mealTitle))
         }
     }
 
@@ -144,6 +208,14 @@ class DiaryViewModel @Inject constructor(
                 val newDate = moscowDateTimeProvider.currentDate()
                 if (newDate != observedDate) {
                     observedDate = newDate
+                    pendingDeletedMeal = null
+                    updateState {
+                        copy(
+                            newMealTitleInput = "",
+                            editingMealKey = null,
+                            editingMealTitleInput = "",
+                        )
+                    }
                     observeDiary()
                 }
             }
@@ -162,16 +234,16 @@ private val defaultNutritionGoals = NutritionGoals(
 )
 
 private fun DayDiary.toMealCards(): List<MealCardUiModel> =
-    MealType.entries.map { mealType ->
-        val summary = mealSummaries[mealType]
-
+    mealSummaries.map { summary ->
         MealCardUiModel(
-            mealType = mealType,
-            calories = (summary?.totalCalories ?: 0.0).toInt(),
-            protein = summary?.totalProtein ?: 0.0,
-            fat = summary?.totalFat ?: 0.0,
-            carbs = summary?.totalCarbs ?: 0.0,
-            entriesCount = summary?.entriesCount ?: 0,
+            mealKey = summary.mealKey,
+            title = summary.title,
+            isBase = summary.mealKey == "breakfast" || summary.mealKey == "lunch" || summary.mealKey == "dinner",
+            calories = summary.totalCalories.toInt(),
+            protein = summary.totalProtein,
+            fat = summary.totalFat,
+            carbs = summary.totalCarbs,
+            entriesCount = summary.entriesCount,
         )
     }
 
@@ -197,3 +269,4 @@ private fun buildNutritionProgressCard(
             goal = goals.carbs,
         ),
     )
+

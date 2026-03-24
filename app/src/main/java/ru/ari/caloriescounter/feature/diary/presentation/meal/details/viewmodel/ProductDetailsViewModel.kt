@@ -1,4 +1,4 @@
-package ru.ari.caloriescounter.feature.diary.presentation.meal.details.viewmodel
+﻿package ru.ari.caloriescounter.feature.diary.presentation.meal.details.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -11,7 +11,6 @@ import ru.ari.caloriescounter.core.common.time.MoscowDateTimeProvider
 import ru.ari.caloriescounter.core.navigation.AppRoute
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.diary.DiaryEntry
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionPer100g
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.Portion
 import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductRef
@@ -61,7 +60,7 @@ class ProductDetailsViewModel @Inject constructor(
                 DiaryEntry(
                     id = 0,
                     date = moscowDateTimeProvider.currentDate(),
-                    mealType = route.mealType.toMealTypeOrDefault(),
+                    mealKey = route.mealKey,
                     product = ProductRef(
                         source = route.source.toProductSourceOrDefault(),
                         externalId = route.externalId,
@@ -86,7 +85,8 @@ class ProductDetailsViewModel @Inject constructor(
 private fun SavedStateHandle.toInitialState(): ProductDetailsState {
     val route = toRoute<AppRoute.MealProductDetailsRoute>()
     return ProductDetailsState(
-        mealType = route.mealType.toMealTypeOrDefault(),
+        mealKey = route.mealKey,
+        mealTitle = route.mealTitle,
         productName = route.nameRu,
         caloriesPer100g = route.caloriesPer100g,
         proteinPer100g = route.proteinPer100g,
@@ -105,10 +105,8 @@ private fun ProductDetailsState.recalculate(grams: Double): ProductDetailsState 
     )
 }
 
-private fun String.toMealTypeOrDefault(): MealType =
-    runCatching { MealType.valueOf(this) }.getOrElse { MealType.BREAKFAST }
-
 private fun String.toProductSourceOrDefault(): ProductSource =
     runCatching { ProductSource.valueOf(this) }.getOrElse { ProductSource.OPEN_FOOD_FACTS }
 
 private fun String.parseGrams(): Double? = replace(',', '.').toDoubleOrNull()
+

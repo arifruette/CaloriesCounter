@@ -1,4 +1,4 @@
-package ru.ari.caloriescounter.feature.diary.presentation.meal
+﻿package ru.ari.caloriescounter.feature.diary.presentation.meal
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -12,7 +12,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.flow.collectLatest
 import ru.ari.caloriescounter.R
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel.MealProductsViewModel
 import ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel.contract.MealProductsEffect
 import ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel.contract.MealProductsIntent
@@ -21,8 +20,8 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel.contract
 fun MealProductsRoute(
     contentPadding: PaddingValues,
     onBackClick: () -> Unit,
-    onNavigateToSearch: (MealType) -> Unit,
-    onNavigateToEntryEdit: (Long, MealType, String, Double) -> Unit,
+    onNavigateToSearch: (mealKey: String, mealTitle: String) -> Unit,
+    onNavigateToEntryEdit: (entryId: Long, mealKey: String, mealTitle: String, entryName: String, grams: Double) -> Unit,
     viewModel: MealProductsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -37,11 +36,12 @@ fun MealProductsRoute(
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
-                is MealProductsEffect.NavigateToSearch -> onNavigateToSearch(effect.mealType)
+                is MealProductsEffect.NavigateToSearch -> onNavigateToSearch(effect.mealKey, effect.mealTitle)
                 is MealProductsEffect.NavigateToEntryEdit -> {
                     onNavigateToEntryEdit(
                         effect.entryId,
-                        effect.mealType,
+                        effect.mealKey,
+                        effect.mealTitle,
                         effect.entryName,
                         effect.grams,
                     )
@@ -76,3 +76,4 @@ fun MealProductsRoute(
         },
     )
 }
+

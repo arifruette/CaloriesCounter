@@ -16,17 +16,27 @@ sealed interface AppRoute {
     data object ProfileRoute : AppRoute
 
     @Serializable
-    data class MealProductsRoute(val mealType: String) : AppRoute
+    data class MealProductsRoute(
+        val mealKey: String,
+        val mealTitle: String,
+    ) : AppRoute
 
     @Serializable
-    data class MealProductSearchRoute(val mealType: String) : AppRoute
+    data class MealProductSearchRoute(
+        val mealKey: String,
+        val mealTitle: String,
+    ) : AppRoute
 
     @Serializable
-    data class ManualProductCreateRoute(val mealType: String) : AppRoute
+    data class ManualProductCreateRoute(
+        val mealKey: String,
+        val mealTitle: String,
+    ) : AppRoute
 
     @Serializable
     data class MealProductDetailsRoute(
-        val mealType: String,
+        val mealKey: String,
+        val mealTitle: String,
         val source: String,
         val externalId: String?,
         val barcode: String?,
@@ -40,7 +50,8 @@ sealed interface AppRoute {
     @Serializable
     data class MealEntryEditRoute(
         val entryId: Long,
-        val mealType: String,
+        val mealKey: String,
+        val mealTitle: String,
         val entryName: String,
         val grams: Double,
     ) : AppRoute

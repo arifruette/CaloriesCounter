@@ -35,7 +35,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.feature.diary.presentation.common.formatRuDecimal
-import ru.ari.caloriescounter.feature.diary.presentation.common.titleRes
 import ru.ari.caloriescounter.feature.diary.presentation.meal.model.MealEntryUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel.contract.MealProductsState
 
@@ -53,7 +52,7 @@ fun MealProductsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(state.mealType.titleRes())) },
+                title = { Text(text = state.mealTitle) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(

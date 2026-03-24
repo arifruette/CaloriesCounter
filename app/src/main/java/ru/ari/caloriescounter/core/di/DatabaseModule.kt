@@ -10,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import ru.ari.caloriescounter.core.database.AppDatabase
 import ru.ari.caloriescounter.core.database.dao.CalorieEntryDao
+import ru.ari.caloriescounter.core.database.dao.DayMealSlotDao
 import ru.ari.caloriescounter.core.database.dao.ManualProductDao
 import ru.ari.caloriescounter.core.database.dao.NutritionGoalsDao
 import ru.ari.caloriescounter.core.database.dao.WeightProfileDao
@@ -17,6 +18,7 @@ import ru.ari.caloriescounter.core.database.migration.migration1To2
 import ru.ari.caloriescounter.core.database.migration.migration2To3
 import ru.ari.caloriescounter.core.database.migration.migration3To4
 import ru.ari.caloriescounter.core.database.migration.migration4To5
+import ru.ari.caloriescounter.core.database.migration.migration5To6
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -30,6 +32,7 @@ object DatabaseModule {
             .addMigrations(migration2To3)
             .addMigrations(migration3To4)
             .addMigrations(migration4To5)
+            .addMigrations(migration5To6)
             .build()
 
     @Provides
@@ -43,4 +46,7 @@ object DatabaseModule {
 
     @Provides
     fun provideManualProductDao(database: AppDatabase): ManualProductDao = database.manualProductDao()
+
+    @Provides
+    fun provideDayMealSlotDao(database: AppDatabase): DayMealSlotDao = database.dayMealSlotDao()
 }

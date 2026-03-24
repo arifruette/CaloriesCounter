@@ -1,10 +1,10 @@
 package ru.ari.caloriescounter.feature.diary.presentation.meal.details.viewmodel.contract
 
 import ru.ari.caloriescounter.core.common.mvi.contracts.UiState
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 
 data class ProductDetailsState(
-    val mealType: MealType,
+    val mealKey: String,
+    val mealTitle: String,
     val productName: String,
     val caloriesPer100g: Double,
     val proteinPer100g: Double,

@@ -1,4 +1,4 @@
-package ru.ari.caloriescounter.feature.diary.presentation.meal.edit.viewmodel
+﻿package ru.ari.caloriescounter.feature.diary.presentation.meal.edit.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import ru.ari.caloriescounter.core.common.mvi.BaseMviViewModel
 import ru.ari.caloriescounter.core.navigation.AppRoute
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.common.formatRuDecimal
 import ru.ari.caloriescounter.feature.diary.presentation.meal.edit.viewmodel.contract.MealEntryEditEffect
 import ru.ari.caloriescounter.feature.diary.presentation.meal.edit.viewmodel.contract.MealEntryEditIntent
@@ -59,13 +58,12 @@ private fun SavedStateHandle.toInitialState(): MealEntryEditState {
     val route = toRoute<AppRoute.MealEntryEditRoute>()
     return MealEntryEditState(
         entryId = route.entryId,
-        mealType = route.mealType.toMealTypeOrDefault(),
+        mealKey = route.mealKey,
+        mealTitle = route.mealTitle,
         entryName = route.entryName,
         gramsInput = route.grams.formatRuDecimal(),
     )
 }
 
-private fun String.toMealTypeOrDefault(): MealType =
-    runCatching { MealType.valueOf(this) }.getOrElse { MealType.BREAKFAST }
-
 private fun String.parseGrams(): Double? = replace(',', '.').toDoubleOrNull()
+

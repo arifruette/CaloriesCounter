@@ -1,4 +1,4 @@
-package ru.ari.caloriescounter.feature.diary.presentation.meal.search
+﻿package ru.ari.caloriescounter.feature.diary.presentation.meal.search
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -10,7 +10,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.flow.collectLatest
 import ru.ari.caloriescounter.R
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.model.ProductSearchItemUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.ProductSearchViewModel
 import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.contract.ProductSearchEffect
@@ -20,8 +19,8 @@ import ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel.c
 fun ProductSearchRoute(
     contentPadding: PaddingValues,
     onBackClick: () -> Unit,
-    onNavigateToProductDetails: (MealType, ProductSearchItemUiModel) -> Unit,
-    onNavigateToManualProductCreate: (MealType) -> Unit,
+    onNavigateToProductDetails: (mealKey: String, mealTitle: String, product: ProductSearchItemUiModel) -> Unit,
+    onNavigateToManualProductCreate: (mealKey: String, mealTitle: String) -> Unit,
     viewModel: ProductSearchViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -32,7 +31,7 @@ fun ProductSearchRoute(
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 is ProductSearchEffect.NavigateToProductDetails ->
-                    onNavigateToProductDetails(effect.mealType, effect.product)
+                    onNavigateToProductDetails(effect.mealKey, effect.mealTitle, effect.product)
                 is ProductSearchEffect.ShowMessage ->
                     snackbarHostState.showSnackbar(message = context.getString(effect.messageResId))
                 is ProductSearchEffect.ProductQuickAdded ->
@@ -43,7 +42,7 @@ fun ProductSearchRoute(
                         ),
                     )
                 is ProductSearchEffect.NavigateToManualProductCreate ->
-                    onNavigateToManualProductCreate(effect.mealType)
+                    onNavigateToManualProductCreate(effect.mealKey, effect.mealTitle)
                 ProductSearchEffect.ManualProductDeleted ->
                     snackbarHostState.showSnackbar(
                         message = context.getString(R.string.meal_products_manual_delete_success),
@@ -72,3 +71,4 @@ fun ProductSearchRoute(
         },
     )
 }
+

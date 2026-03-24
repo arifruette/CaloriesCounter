@@ -14,6 +14,11 @@
     <string name="meal_dinner">Ужин</string>
     <string name="meal_snack">Перекус</string>
     <string name="meal_summary">%1$d ккал · Б %2$s Ж %3$s У %4$s · %5$d блюд</string>
+    <string name="diary_add_meal_label">Новый прием пищи</string>
+    <string name="diary_add_meal_action">Добавить</string>
+    <string name="diary_meal_rename_action">Переименовать</string>
+    <string name="diary_meal_delete_action">Удалить прием пищи</string>
+    <string name="diary_meal_deleted_message">Прием пищи удален</string>
 
     <string name="screen_meal_products_title">Добавление продуктов: %1$s</string>
     <string name="screen_meal_products_description">Здесь будет поиск по названию и штрихкоду, выбор порции и добавление в выбранный прием пищи.</string>
@@ -138,6 +143,7 @@
     <string name="action_edit">Изменить</string>
     <string name="action_save">Сохранить</string>
     <string name="action_undo">Отменить</string>
+    <string name="action_cancel">Отмена</string>
     <string name="stats_weekly_summary_empty">За последние 7 дней пока нет записей в дневнике.</string>
     <string name="stats_metric_avg_calories_title">Средние калории в день</string>
     <string name="stats_metric_avg_calories_value">%1$d ккал</string>

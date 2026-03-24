@@ -37,7 +37,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.core.navigation.launchgate.LaunchGateRoute
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.diary.DiaryRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.MealProductsRoute
 import ru.ari.caloriescounter.feature.diary.presentation.meal.edit.MealEntryEditRoute
@@ -192,8 +191,13 @@ private fun CaloriesCounterNavHost(
         composable<AppRoute.DiaryRoute> {
             DiaryRoute(
                 contentPadding = contentPadding,
-                onNavigateToMealProducts = { mealType ->
-                    navController.navigate(AppRoute.MealProductsRoute(mealType.name))
+                onNavigateToMealProducts = { mealKey, mealTitle ->
+                    navController.navigate(
+                        AppRoute.MealProductsRoute(
+                            mealKey = mealKey,
+                            mealTitle = mealTitle,
+                        ),
+                    )
                 },
                 onNavigateToNutritionGoals = {
                     navController.navigate(AppRoute.NutritionGoalsRoute)
@@ -215,14 +219,20 @@ private fun CaloriesCounterNavHost(
             MealProductsRoute(
                 contentPadding = contentPadding,
                 onBackClick = { navController.popBackStack() },
-                onNavigateToSearch = { mealType ->
-                    navController.navigate(AppRoute.MealProductSearchRoute(mealType = mealType.name))
+                onNavigateToSearch = { mealKey, mealTitle ->
+                    navController.navigate(
+                        AppRoute.MealProductSearchRoute(
+                            mealKey = mealKey,
+                            mealTitle = mealTitle,
+                        ),
+                    )
                 },
-                onNavigateToEntryEdit = { entryId, mealType, entryName, grams ->
+                onNavigateToEntryEdit = { entryId, mealKey, mealTitle, entryName, grams ->
                     navController.navigate(
                         AppRoute.MealEntryEditRoute(
                             entryId = entryId,
-                            mealType = mealType.name,
+                            mealKey = mealKey,
+                            mealTitle = mealTitle,
                             entryName = entryName,
                             grams = grams,
                         ),
@@ -234,11 +244,16 @@ private fun CaloriesCounterNavHost(
             ProductSearchRoute(
                 contentPadding = contentPadding,
                 onBackClick = { navController.popBackStack() },
-                onNavigateToProductDetails = { mealType, product ->
-                    navController.navigate(product.toProductDetailsRoute(mealType))
+                onNavigateToProductDetails = { mealKey, mealTitle, product ->
+                    navController.navigate(product.toProductDetailsRoute(mealKey, mealTitle))
                 },
-                onNavigateToManualProductCreate = { mealType ->
-                    navController.navigate(AppRoute.ManualProductCreateRoute(mealType = mealType.name))
+                onNavigateToManualProductCreate = { mealKey, mealTitle ->
+                    navController.navigate(
+                        AppRoute.ManualProductCreateRoute(
+                            mealKey = mealKey,
+                            mealTitle = mealTitle,
+                        ),
+                    )
                 },
             )
         }
@@ -256,7 +271,7 @@ private fun CaloriesCounterNavHost(
                 onBackClick = { navController.popBackStack() },
                 onProductAdded = {
                     navController.popBackStack(
-                        route = AppRoute.MealProductsRoute(route.mealType),
+                        route = AppRoute.MealProductsRoute(route.mealKey, route.mealTitle),
                         inclusive = false,
                     )
                 },
@@ -286,9 +301,13 @@ private fun CaloriesCounterNavHost(
     }
 }
 
-private fun ProductSearchItemUiModel.toProductDetailsRoute(mealType: MealType): AppRoute.MealProductDetailsRoute =
+private fun ProductSearchItemUiModel.toProductDetailsRoute(
+    mealKey: String,
+    mealTitle: String,
+): AppRoute.MealProductDetailsRoute =
     AppRoute.MealProductDetailsRoute(
-        mealType = mealType.name,
+        mealKey = mealKey,
+        mealTitle = mealTitle,
         source = source.name,
         externalId = externalId,
         barcode = barcode,

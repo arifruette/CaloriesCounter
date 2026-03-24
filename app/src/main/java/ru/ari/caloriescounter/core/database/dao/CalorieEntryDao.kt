@@ -12,12 +12,18 @@ interface CalorieEntryDao {
     @Query("SELECT * FROM calorie_entries WHERE dayDate = :dayDate ORDER BY id DESC")
     fun observeEntriesByDate(dayDate: String): Flow<List<CalorieEntryEntity>>
 
+    @Query("SELECT * FROM calorie_entries WHERE dayDate = :dayDate ORDER BY id DESC")
+    suspend fun getEntriesByDate(dayDate: String): List<CalorieEntryEntity>
+
     @Query(
         "SELECT * FROM calorie_entries " +
-            "WHERE dayDate = :dayDate AND mealType = :mealType " +
+            "WHERE dayDate = :dayDate AND mealType = :mealKey " +
             "ORDER BY id DESC",
     )
-    fun observeEntriesByDateAndMeal(dayDate: String, mealType: String): Flow<List<CalorieEntryEntity>>
+    fun observeEntriesByDateAndMeal(dayDate: String, mealKey: String): Flow<List<CalorieEntryEntity>>
+
+    @Query("SELECT * FROM calorie_entries WHERE dayDate = :dayDate AND mealType = :mealKey ORDER BY id ASC")
+    suspend fun getEntriesByDateAndMeal(dayDate: String, mealKey: String): List<CalorieEntryEntity>
 
     @Query(
         "SELECT * FROM calorie_entries " +
@@ -31,6 +37,12 @@ interface CalorieEntryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEntry(entry: CalorieEntryEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEntries(entries: List<CalorieEntryEntity>)
+
+    @Query("DELETE FROM calorie_entries WHERE dayDate = :dayDate AND mealType = :mealKey")
+    suspend fun deleteByDateAndMeal(dayDate: String, mealKey: String)
 
     @Query("UPDATE calorie_entries SET portionGrams = :grams WHERE id = :entryId")
     suspend fun updatePortionById(entryId: Long, grams: Double)

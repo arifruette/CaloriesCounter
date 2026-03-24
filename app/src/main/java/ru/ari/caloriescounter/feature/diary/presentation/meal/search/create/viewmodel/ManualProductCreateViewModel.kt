@@ -13,7 +13,6 @@ import ru.ari.caloriescounter.core.navigation.AppRoute
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ManualProductInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.diary.DiaryEntry
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionPer100g
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.Portion
 import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductRef
@@ -32,8 +31,7 @@ class ManualProductCreateViewModel @Inject constructor(
         ManualProductCreateState(),
     ) {
 
-    private val mealType = savedStateHandle.toRoute<AppRoute.ManualProductCreateRoute>().mealType
-        .toMealTypeOrDefault()
+    private val mealKey = savedStateHandle.toRoute<AppRoute.ManualProductCreateRoute>().mealKey
 
     override fun onIntent(intent: ManualProductCreateIntent) {
         when (intent) {
@@ -99,10 +97,10 @@ class ManualProductCreateViewModel @Inject constructor(
         }
 
         val nutrition = NutritionPer100g(
-            calories = calories ?: 0.0,
-            protein = protein ?: 0.0,
-            fat = fat ?: 0.0,
-            carbs = carbs ?: 0.0,
+            calories = calories,
+            protein = protein,
+            fat = fat,
+            carbs = carbs,
         )
 
         viewModelScope.launch {
@@ -116,7 +114,7 @@ class ManualProductCreateViewModel @Inject constructor(
                     DiaryEntry(
                         id = 0,
                         date = moscowDateTimeProvider.currentDate(),
-                        mealType = mealType,
+                        mealKey = mealKey,
                         product = ProductRef(
                             source = ProductSource.MANUAL,
                             externalId = manualProductId.toString(),
@@ -125,7 +123,7 @@ class ManualProductCreateViewModel @Inject constructor(
                             nameOriginal = null,
                         ),
                         nutritionPer100g = nutrition,
-                        portion = Portion(grams = grams ?: 0.0),
+                        portion = Portion(grams = grams),
                     ),
                 )
             }.onSuccess {
@@ -137,8 +135,5 @@ class ManualProductCreateViewModel @Inject constructor(
         }
     }
 }
-
-private fun String.toMealTypeOrDefault(): MealType =
-    runCatching { MealType.valueOf(this) }.getOrElse { MealType.BREAKFAST }
 
 private fun String.parseDecimalInput(): Double? = trim().replace(',', '.').toDoubleOrNull()

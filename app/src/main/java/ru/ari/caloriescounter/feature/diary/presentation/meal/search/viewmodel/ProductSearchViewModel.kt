@@ -1,4 +1,4 @@
-package ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel
+﻿package ru.ari.caloriescounter.feature.diary.presentation.meal.search.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -18,7 +18,6 @@ import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ManualProductInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.ProductSearchInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.diary.DiaryEntry
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionPer100g
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.Portion
 import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductRef
@@ -39,8 +38,9 @@ class ProductSearchViewModel @Inject constructor(
     private val moscowDateTimeProvider: MoscowDateTimeProvider,
 ) : BaseMviViewModel<ProductSearchIntent, ProductSearchState, ProductSearchEffect>(ProductSearchState()) {
 
-    private val mealType = savedStateHandle.toRoute<AppRoute.MealProductSearchRoute>().mealType
-        .toMealTypeOrDefault()
+    private val route = savedStateHandle.toRoute<AppRoute.MealProductSearchRoute>()
+    private val mealKey = route.mealKey
+    private val mealTitle = route.mealTitle
     private var debounceSearchJob: Job? = null
     private var searchRequestJob: Job? = null
 
@@ -158,13 +158,24 @@ class ProductSearchViewModel @Inject constructor(
 
     private fun navigateToDetails(product: ProductSearchItemUiModel) {
         viewModelScope.launch {
-            emitEffect(ProductSearchEffect.NavigateToProductDetails(mealType = mealType, product = product))
+            emitEffect(
+                ProductSearchEffect.NavigateToProductDetails(
+                    mealKey = mealKey,
+                    mealTitle = mealTitle,
+                    product = product,
+                ),
+            )
         }
     }
 
     private fun navigateToManualCreate() {
         viewModelScope.launch {
-            emitEffect(ProductSearchEffect.NavigateToManualProductCreate(mealType = mealType))
+            emitEffect(
+                ProductSearchEffect.NavigateToManualProductCreate(
+                    mealKey = mealKey,
+                    mealTitle = mealTitle,
+                ),
+            )
         }
     }
 
@@ -177,7 +188,7 @@ class ProductSearchViewModel @Inject constructor(
                 diaryInteractor.addEntry(
                     product.toDiaryEntry(
                         date = moscowDateTimeProvider.currentDate(),
-                        mealType = mealType,
+                        mealKey = mealKey,
                         grams = DEFAULT_QUICK_ADD_GRAMS,
                     ),
                 )
@@ -198,7 +209,7 @@ class ProductSearchViewModel @Inject constructor(
                 diaryInteractor.addEntry(
                     product.toSearchItem().toDiaryEntry(
                         date = moscowDateTimeProvider.currentDate(),
-                        mealType = mealType,
+                        mealKey = mealKey,
                         grams = DEFAULT_QUICK_ADD_GRAMS,
                     ),
                 )
@@ -227,20 +238,17 @@ class ProductSearchViewModel @Inject constructor(
     }
 }
 
-private fun String.toMealTypeOrDefault(): MealType =
-    runCatching { MealType.valueOf(this) }.getOrElse { MealType.BREAKFAST }
-
 private fun ProductSearchItemUiModel.toStableKey(): String = "${source.name}:${externalId}:${nameRu}"
 
 private fun ProductSearchItemUiModel.toDiaryEntry(
     date: java.time.LocalDate,
-    mealType: MealType,
+    mealKey: String,
     grams: Double,
 ): DiaryEntry =
     DiaryEntry(
         id = 0,
         date = date,
-        mealType = mealType,
+        mealKey = mealKey,
         product = ProductRef(
             source = source,
             externalId = externalId,
@@ -270,3 +278,4 @@ private fun ManualProductUiModel.toSearchItem(): ProductSearchItemUiModel =
     )
 
 private const val DEFAULT_QUICK_ADD_GRAMS = 100.0
+

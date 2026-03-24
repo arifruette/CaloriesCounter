@@ -180,7 +180,7 @@ private fun emptyDayDiary(date: LocalDate): DayDiary =
     DayDiary(
         date = date,
         entries = emptyList(),
-        mealSummaries = emptyMap(),
+        mealSummaries = emptyList(),
         totalCalories = 0.0,
         totalProtein = 0.0,
         totalFat = 0.0,

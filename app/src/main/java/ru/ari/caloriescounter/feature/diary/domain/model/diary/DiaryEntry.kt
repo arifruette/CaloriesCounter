@@ -2,7 +2,6 @@ package ru.ari.caloriescounter.feature.diary.domain.model.diary
 
 import java.time.LocalDate
 import kotlin.math.round
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionPer100g
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.Portion
 import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductRef
@@ -10,7 +9,7 @@ import ru.ari.caloriescounter.feature.diary.domain.model.product.ProductRef
 data class DiaryEntry(
     val id: Long,
     val date: LocalDate,
-    val mealType: MealType,
+    val mealKey: String,
     val product: ProductRef,
     val nutritionPer100g: NutritionPer100g,
     val portion: Portion,

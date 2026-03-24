@@ -1,4 +1,4 @@
-package ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel
+﻿package ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,6 @@ import ru.ari.caloriescounter.core.common.time.MoscowDateTimeProvider
 import ru.ari.caloriescounter.core.navigation.AppRoute
 import ru.ari.caloriescounter.feature.diary.domain.interactor.DiaryInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.diary.DiaryEntry
-import ru.ari.caloriescounter.feature.diary.domain.model.meal.MealType
 import ru.ari.caloriescounter.feature.diary.presentation.meal.model.MealEntryUiModel
 import ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel.contract.MealProductsEffect
 import ru.ari.caloriescounter.feature.diary.presentation.meal.viewmodel.contract.MealProductsIntent
@@ -27,7 +26,8 @@ class MealProductsViewModel @Inject constructor(
     private val moscowDateTimeProvider: MoscowDateTimeProvider,
 ) : BaseMviViewModel<MealProductsIntent, MealProductsState, MealProductsEffect>(
         initialState = MealProductsState(
-            mealType = savedStateHandle.toRoute<AppRoute.MealProductsRoute>().mealType.toMealTypeOrDefault(),
+            mealKey = savedStateHandle.toRoute<AppRoute.MealProductsRoute>().mealKey,
+            mealTitle = savedStateHandle.toRoute<AppRoute.MealProductsRoute>().mealTitle,
         ),
     ) {
 
@@ -53,7 +53,7 @@ class MealProductsViewModel @Inject constructor(
     private fun observeEntries() {
         observeEntriesJob?.cancel()
         observeEntriesJob = viewModelScope.launch {
-            diaryInteractor.observeMealEntries(observedDate, state.value.mealType).collect { entries ->
+            diaryInteractor.observeMealEntries(observedDate, state.value.mealKey).collect { entries ->
                 latestEntries = entries
                 val uiEntries = entries.map { it.toUiModel() }
                 updateState {
@@ -90,7 +90,12 @@ class MealProductsViewModel @Inject constructor(
 
     private fun navigateToSearch() {
         viewModelScope.launch {
-            emitEffect(MealProductsEffect.NavigateToSearch(state.value.mealType))
+            emitEffect(
+                MealProductsEffect.NavigateToSearch(
+                    mealKey = state.value.mealKey,
+                    mealTitle = state.value.mealTitle,
+                ),
+            )
         }
     }
 
@@ -100,7 +105,8 @@ class MealProductsViewModel @Inject constructor(
             emitEffect(
                 MealProductsEffect.NavigateToEntryEdit(
                     entryId = entry.id,
-                    mealType = state.value.mealType,
+                    mealKey = state.value.mealKey,
+                    mealTitle = state.value.mealTitle,
                     entryName = entry.product.nameRu,
                     grams = entry.portion.grams,
                 ),
@@ -123,9 +129,6 @@ class MealProductsViewModel @Inject constructor(
     }
 }
 
-private fun String.toMealTypeOrDefault(): MealType =
-    runCatching { MealType.valueOf(this) }.getOrElse { MealType.BREAKFAST }
-
 private fun DiaryEntry.toUiModel(): MealEntryUiModel =
     MealEntryUiModel(
         id = id,
@@ -136,3 +139,4 @@ private fun DiaryEntry.toUiModel(): MealEntryUiModel =
         fat = totalFat(),
         carbs = totalCarbs(),
     )
+

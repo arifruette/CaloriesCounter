@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 import ru.ari.caloriescounter.R
 import ru.ari.caloriescounter.feature.diary.presentation.common.formatRuDecimal
 import ru.ari.caloriescounter.feature.diary.presentation.diary.viewmodel.model.DiaryMacroProgressUiModel
@@ -51,6 +52,14 @@ fun NutritionProgressCard(
                     card.calories.current.toInt(),
                     card.calories.goal.toInt(),
                 ),
+                excessText = if (card.calories.isExceeded) {
+                    stringResource(
+                        R.string.diary_nutrition_progress_excess_kcal,
+                        card.calories.excessAmount.roundToInt(),
+                    )
+                } else {
+                    null
+                },
             )
             NutritionProgressRow(
                 label = stringResource(R.string.meal_products_metric_protein),
@@ -60,6 +69,14 @@ fun NutritionProgressCard(
                     card.protein.current.formatRuDecimal(),
                     card.protein.goal.formatRuDecimal(),
                 ),
+                excessText = if (card.protein.isExceeded) {
+                    stringResource(
+                        R.string.diary_nutrition_progress_excess_grams,
+                        card.protein.excessAmount.formatRuDecimal(),
+                    )
+                } else {
+                    null
+                },
             )
             NutritionProgressRow(
                 label = stringResource(R.string.meal_products_metric_fat),
@@ -69,6 +86,14 @@ fun NutritionProgressCard(
                     card.fat.current.formatRuDecimal(),
                     card.fat.goal.formatRuDecimal(),
                 ),
+                excessText = if (card.fat.isExceeded) {
+                    stringResource(
+                        R.string.diary_nutrition_progress_excess_grams,
+                        card.fat.excessAmount.formatRuDecimal(),
+                    )
+                } else {
+                    null
+                },
             )
             NutritionProgressRow(
                 label = stringResource(R.string.meal_products_metric_carbs),
@@ -78,6 +103,14 @@ fun NutritionProgressCard(
                     card.carbs.current.formatRuDecimal(),
                     card.carbs.goal.formatRuDecimal(),
                 ),
+                excessText = if (card.carbs.isExceeded) {
+                    stringResource(
+                        R.string.diary_nutrition_progress_excess_grams,
+                        card.carbs.excessAmount.formatRuDecimal(),
+                    )
+                } else {
+                    null
+                },
             )
             Button(
                 onClick = onEditGoalsClick,
@@ -94,7 +127,25 @@ private fun NutritionProgressRow(
     label: String,
     metric: DiaryMacroProgressUiModel,
     valueText: String,
+    excessText: String?,
 ) {
+    val isExceeded = metric.isExceeded
+    val metricColor = if (isExceeded) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    val valueColor = if (isExceeded) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+    val progressColor = if (isExceeded) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -104,19 +155,32 @@ private fun NutritionProgressRow(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = metricColor,
             )
-            Text(
-                text = valueText,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = valueText,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = valueColor,
+                )
+                excessText?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
         }
         LinearProgressIndicator(
             progress = { metric.progress },
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+            color = progressColor,
+            trackColor = if (isExceeded) {
+                MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+            } else {
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+            },
         )
     }
 }

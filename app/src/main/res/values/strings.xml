@@ -92,6 +92,8 @@
     <string name="diary_nutrition_progress_edit">Изменить цели</string>
     <string name="diary_nutrition_progress_kcal">%1$d / %2$d ккал</string>
     <string name="diary_nutrition_progress_grams">%1$s / %2$s г</string>
+    <string name="diary_nutrition_progress_excess_kcal">+%1$d ккал</string>
+    <string name="diary_nutrition_progress_excess_grams">+%1$s г</string>
     <string name="screen_nutrition_goals">Цели КБЖУ</string>
     <string name="nutrition_goals_subtitle">Задайте дневные цели для калорий и макронутриентов.</string>
     <string name="nutrition_goals_error">Введите значение больше 0</string>

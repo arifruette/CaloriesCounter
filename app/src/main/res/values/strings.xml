@@ -140,6 +140,10 @@
     <string name="profile_validation_error">Проверьте поля: заполните все значения в допустимых диапазонах.</string>
     <string name="nutrition_goals_error">Введите значение больше 0</string>
     <string name="nutrition_goals_save">Сохранить</string>
+    <string name="nutrition_recommendation_title">Рекомендация по профилю</string>
+    <string name="nutrition_recommendation_value">%1$d ккал · Б %2$s Ж %3$s У %4$s</string>
+    <string name="nutrition_recommendation_differs">Текущие цели отличаются от рекомендации</string>
+    <string name="nutrition_recommendation_apply">Применить рекомендации</string>
     <string name="action_edit">Изменить</string>
     <string name="action_save">Сохранить</string>
     <string name="action_undo">Отменить</string>

@@ -25,6 +25,7 @@ import ru.ari.caloriescounter.feature.diary.domain.model.profile.GoalType
 import ru.ari.caloriescounter.feature.diary.domain.model.profile.UserSex
 import ru.ari.caloriescounter.feature.diary.presentation.common.formatRuDecimal
 import ru.ari.caloriescounter.feature.diary.presentation.profile.viewmodel.contract.ProfileState
+import kotlin.math.abs
 
 @Composable
 fun ProfileScreen(
@@ -117,21 +118,12 @@ private fun WeightProgressCard(state: ProfileState) {
                     value = state.initialWeightKg,
                 )
                 WeightMetric(
-                    label = stringResource(R.string.profile_weight_current),
+                    label = state.weightDeltaLabel(),
                     value = state.currentWeightKg,
                 )
                 WeightMetric(
                     label = stringResource(R.string.profile_weight_target),
                     value = state.targetWeightKg,
-                )
-            }
-
-            val goalHint = state.remainingToGoalText()
-            if (goalHint.isNotEmpty()) {
-                Text(
-                    text = goalHint,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -221,19 +213,6 @@ private fun ProfileCard(content: @Composable () -> Unit) {
     }
 }
 
-@Composable
-private fun ProfileState.remainingToGoalText(): String =
-    when (goalType) {
-        GoalType.Lose -> stringResource(
-            R.string.profile_weight_remaining_lose,
-            remainingToGoalKg.formatRuDecimal(),
-        )
-        GoalType.Gain -> stringResource(
-            R.string.profile_weight_remaining_gain,
-            remainingToGoalKg.formatRuDecimal(),
-        )
-        GoalType.Maintain -> ""
-    }
 
 @Composable
 private fun ProfileState.displayName(): String {
@@ -244,6 +223,19 @@ private fun ProfileState.displayName(): String {
     }
 
     return "$first $last"
+}
+
+@Composable
+private fun ProfileState.weightDeltaLabel(): String {
+    val delta = currentWeightKg - initialWeightKg
+    val normalized = if (abs(delta) < 0.0001) 0.0 else delta
+    val signedValue = if (normalized > 0.0) {
+        "+${normalized.formatRuDecimal()}"
+    } else {
+        normalized.formatRuDecimal()
+    }
+
+    return stringResource(R.string.weight_value, signedValue)
 }
 
 @Composable
@@ -286,4 +278,3 @@ private fun GoalType.label(): String =
         GoalType.Maintain -> stringResource(R.string.profile_goal_maintain)
         GoalType.Gain -> stringResource(R.string.profile_goal_gain)
     }
-

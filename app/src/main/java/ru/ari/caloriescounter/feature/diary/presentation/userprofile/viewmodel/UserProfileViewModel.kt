@@ -6,6 +6,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.ari.caloriescounter.core.common.mvi.BaseMviViewModel
+import ru.ari.caloriescounter.feature.diary.domain.interactor.NutritionGoalsInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.UserProfileInteractor
 import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.profile.UserProfile
@@ -17,6 +18,7 @@ import ru.ari.caloriescounter.feature.diary.presentation.userprofile.viewmodel.c
 class UserProfileViewModel @Inject constructor(
     private val userProfileInteractor: UserProfileInteractor,
     private val weightProfileInteractor: WeightProfileInteractor,
+    private val nutritionGoalsInteractor: NutritionGoalsInteractor,
 ) : BaseMviViewModel<UserProfileIntent, UserProfileState, UserProfileEffect>(UserProfileState()) {
 
     private var hasLoaded = false
@@ -117,6 +119,13 @@ class UserProfileViewModel @Inject constructor(
                 weightProfileInteractor.updateInitialWeight(initialWeight)
                 weightProfileInteractor.updateCurrentWeight(currentWeight)
                 weightProfileInteractor.updateTargetWeight(targetWeight)
+            }
+            if (!onboardingCompleted) {
+                val recommendation = nutritionGoalsInteractor.calculateRecommendation(
+                    profile = profile,
+                    currentWeightKg = currentWeight,
+                )
+                nutritionGoalsInteractor.updateGoals(recommendation.goals)
             }
             userProfileInteractor.setOnboardingCompleted(true)
             updateState { copy(isSaving = false, showValidationErrors = false) }

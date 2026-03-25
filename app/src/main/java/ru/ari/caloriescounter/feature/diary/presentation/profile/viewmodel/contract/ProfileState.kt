@@ -23,5 +23,9 @@ data class ProfileState(
     val absoluteWeightChangeKg: Double = 0.0,
     val remainingToGoalKg: Double = 0.0,
     val progress: Float = 0f,
+    val recommendedCalories: Int? = null,
+    val recommendedProtein: Double? = null,
+    val recommendedFat: Double? = null,
+    val recommendedCarbs: Double? = null,
 ) : UiState
 

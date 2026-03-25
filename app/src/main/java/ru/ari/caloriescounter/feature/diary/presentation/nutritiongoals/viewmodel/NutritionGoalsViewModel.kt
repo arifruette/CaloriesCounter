@@ -4,10 +4,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import ru.ari.caloriescounter.core.common.mvi.BaseMviViewModel
 import ru.ari.caloriescounter.feature.diary.domain.interactor.NutritionGoalsInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.UserProfileInteractor
+import ru.ari.caloriescounter.feature.diary.domain.interactor.WeightProfileInteractor
 import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionGoals
+import ru.ari.caloriescounter.feature.diary.domain.model.nutrition.NutritionRecommendation
 import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.viewmodel.contract.NutritionGoalsEffect
 import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.viewmodel.contract.NutritionGoalsIntent
 import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.viewmodel.contract.NutritionGoalsState
@@ -15,13 +19,19 @@ import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.viewmode
 @HiltViewModel
 class NutritionGoalsViewModel @Inject constructor(
     private val goalsInteractor: NutritionGoalsInteractor,
+    private val userProfileInteractor: UserProfileInteractor,
+    private val weightProfileInteractor: WeightProfileInteractor,
 ) : BaseMviViewModel<NutritionGoalsIntent, NutritionGoalsState, NutritionGoalsEffect>(NutritionGoalsState()) {
 
     private var observeGoalsJob: Job? = null
+    private var observeRecommendationJob: Job? = null
 
     override fun onIntent(intent: NutritionGoalsIntent) {
         when (intent) {
-            NutritionGoalsIntent.ScreenOpened -> observeGoals()
+            NutritionGoalsIntent.ScreenOpened -> {
+                observeGoals()
+                observeRecommendation()
+            }
             is NutritionGoalsIntent.CaloriesChanged -> updateState {
                 copy(caloriesInput = intent.value, showValidationErrors = false)
             }
@@ -34,6 +44,7 @@ class NutritionGoalsViewModel @Inject constructor(
             is NutritionGoalsIntent.CarbsChanged -> updateState {
                 copy(carbsInput = intent.value, showValidationErrors = false)
             }
+            NutritionGoalsIntent.ApplyRecommendationClicked -> applyRecommendation()
             NutritionGoalsIntent.SaveClicked -> saveGoals()
         }
     }
@@ -54,6 +65,59 @@ class NutritionGoalsViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun observeRecommendation() {
+        if (observeRecommendationJob != null) return
+
+        observeRecommendationJob = viewModelScope.launch {
+            combine(
+                userProfileInteractor.observeUserProfile(),
+                weightProfileInteractor.observeWeightProfile(),
+            ) { profile, weight ->
+                if (profile == null) null else goalsInteractor.calculateRecommendation(profile, weight.currentWeightKg)
+            }.collect { recommendation ->
+                applyRecommendationToState(recommendation)
+            }
+        }
+    }
+
+    private fun applyRecommendationToState(recommendation: NutritionRecommendation?) {
+        updateState {
+            if (recommendation == null) {
+                copy(
+                    recommendedCalories = null,
+                    recommendedProtein = null,
+                    recommendedFat = null,
+                    recommendedCarbs = null,
+                )
+            } else {
+                copy(
+                    recommendedCalories = recommendation.goals.calories,
+                    recommendedProtein = recommendation.goals.protein,
+                    recommendedFat = recommendation.goals.fat,
+                    recommendedCarbs = recommendation.goals.carbs,
+                )
+            }
+        }
+    }
+
+    private fun applyRecommendation() {
+        val current = state.value
+        val recommendedCalories = current.recommendedCalories ?: return
+        val recommendedProtein = current.recommendedProtein ?: return
+        val recommendedFat = current.recommendedFat ?: return
+        val recommendedCarbs = current.recommendedCarbs ?: return
+
+        updateState {
+            copy(
+                caloriesInput = recommendedCalories.toString(),
+                proteinInput = recommendedProtein.formatGoalInput(),
+                fatInput = recommendedFat.formatGoalInput(),
+                carbsInput = recommendedCarbs.formatGoalInput(),
+                showValidationErrors = false,
+            )
         }
     }
 

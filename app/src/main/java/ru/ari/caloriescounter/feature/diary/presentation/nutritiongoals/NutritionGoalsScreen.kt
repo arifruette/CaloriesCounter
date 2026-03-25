@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ru.ari.caloriescounter.R
+import ru.ari.caloriescounter.feature.diary.presentation.common.formatRuDecimal
 import ru.ari.caloriescounter.feature.diary.presentation.nutritiongoals.viewmodel.contract.NutritionGoalsState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,6 +41,7 @@ fun NutritionGoalsScreen(
     onProteinChanged: (String) -> Unit,
     onFatChanged: (String) -> Unit,
     onCarbsChanged: (String) -> Unit,
+    onApplyRecommendationClick: () -> Unit,
     onSaveClick: () -> Unit,
 ) {
     Scaffold(
@@ -89,6 +93,13 @@ fun NutritionGoalsScreen(
                 ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            if (state.hasRecommendation) {
+                RecommendationCard(
+                    state = state,
+                    onApplyRecommendationClick = onApplyRecommendationClick,
+                )
+            }
+
             OutlinedTextField(
                 value = state.caloriesInput,
                 onValueChange = onCaloriesChanged,
@@ -150,6 +161,55 @@ fun NutritionGoalsScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = stringResource(R.string.nutrition_goals_save))
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecommendationCard(
+    state: NutritionGoalsState,
+    onApplyRecommendationClick: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+    ) {
+        Column(
+            modifier = Modifier.padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.nutrition_recommendation_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Text(
+                text = stringResource(
+                    R.string.nutrition_recommendation_value,
+                    state.recommendedCalories ?: 0,
+                    (state.recommendedProtein ?: 0.0).formatRuDecimal(),
+                    (state.recommendedFat ?: 0.0).formatRuDecimal(),
+                    (state.recommendedCarbs ?: 0.0).formatRuDecimal(),
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            if (state.differsFromRecommendation) {
+                Text(
+                    text = stringResource(R.string.nutrition_recommendation_differs),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+                Button(
+                    onClick = onApplyRecommendationClick,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = stringResource(R.string.nutrition_recommendation_apply))
+                }
             }
         }
     }

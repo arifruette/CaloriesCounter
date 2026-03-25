@@ -38,6 +38,7 @@ fun NutritionGoalsRoute(
         onProteinChanged = { viewModel.onIntent(NutritionGoalsIntent.ProteinChanged(it)) },
         onFatChanged = { viewModel.onIntent(NutritionGoalsIntent.FatChanged(it)) },
         onCarbsChanged = { viewModel.onIntent(NutritionGoalsIntent.CarbsChanged(it)) },
+        onApplyRecommendationClick = { viewModel.onIntent(NutritionGoalsIntent.ApplyRecommendationClicked) },
         onSaveClick = { viewModel.onIntent(NutritionGoalsIntent.SaveClicked) },
     )
 }

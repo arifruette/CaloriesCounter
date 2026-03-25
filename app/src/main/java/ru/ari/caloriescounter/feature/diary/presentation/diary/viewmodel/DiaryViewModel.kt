@@ -133,7 +133,8 @@ class DiaryViewModel @Inject constructor(
     }
 
     private fun addMeal() {
-        val title = state.value.newMealTitleInput
+        val title = state.value.newMealTitleInput.trim()
+        if (title.isBlank()) return
         viewModelScope.launch {
             interactor.addCustomMealSlot(observedDate, title)
             updateState { copy(newMealTitleInput = "") }

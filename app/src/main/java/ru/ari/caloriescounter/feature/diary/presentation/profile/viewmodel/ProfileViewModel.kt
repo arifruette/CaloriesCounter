@@ -123,20 +123,27 @@ class ProfileViewModel @Inject constructor(
         val currentWeight = latestWeightProfile.currentWeightKg
         val initialWeight = latestWeightProfile.initialWeightKg
         val targetWeight = latestWeightProfile.targetWeightKg
-        val goalType = latestUserProfile?.goalType ?: GoalType.Maintain
+        val profile = latestUserProfile
+        val goalType = profile?.goalType ?: GoalType.Maintain
         val caloriesGoal = latestGoals.calories
         val caloriesConsumed = latestDayDiary.totalCalories.toInt()
         val remainingCalories = (caloriesGoal - caloriesConsumed).coerceAtLeast(0)
+        val recommendation = profile?.let {
+            nutritionGoalsInteractor.calculateRecommendation(
+                profile = it,
+                currentWeightKg = currentWeight,
+            )
+        }
 
         updateState {
             copy(
                 isLoading = false,
-                firstName = latestUserProfile?.firstName.orEmpty(),
-                lastName = latestUserProfile?.lastName.orEmpty(),
-                sex = latestUserProfile?.sex,
-                ageYears = latestUserProfile?.ageYears ?: 0,
-                heightCm = latestUserProfile?.heightCm ?: 0,
-                activityLevel = latestUserProfile?.activityLevel ?: state.value.activityLevel,
+                firstName = profile?.firstName.orEmpty(),
+                lastName = profile?.lastName.orEmpty(),
+                sex = profile?.sex,
+                ageYears = profile?.ageYears ?: 0,
+                heightCm = profile?.heightCm ?: 0,
+                activityLevel = profile?.activityLevel ?: state.value.activityLevel,
                 caloriesConsumed = caloriesConsumed,
                 caloriesGoal = caloriesGoal,
                 remainingCalories = remainingCalories,
@@ -151,6 +158,10 @@ class ProfileViewModel @Inject constructor(
                     currentWeightKg = currentWeight,
                     targetWeightKg = targetWeight,
                 ),
+                recommendedCalories = recommendation?.goals?.calories,
+                recommendedProtein = recommendation?.goals?.protein,
+                recommendedFat = recommendation?.goals?.fat,
+                recommendedCarbs = recommendation?.goals?.carbs,
             )
         }
     }
@@ -161,12 +172,13 @@ private fun calculateProgress(
     currentWeightKg: Double,
     targetWeightKg: Double,
 ): Float {
-    val total = abs(targetWeightKg - initialWeightKg)
-    if (total < 0.0001) {
+    val distanceToGoal = targetWeightKg - initialWeightKg
+    if (abs(distanceToGoal) < 0.0001) {
         return if (abs(currentWeightKg - targetWeightKg) < 0.0001) 1f else 0f
     }
 
-    return (abs(currentWeightKg - initialWeightKg) / total).toFloat().coerceIn(0f, 1f)
+    val progress = (currentWeightKg - initialWeightKg) / distanceToGoal
+    return progress.toFloat().coerceIn(0f, 1f)
 }
 
 private fun GoalType.remainingToGoal(currentWeightKg: Double, targetWeightKg: Double): Double =

@@ -8,5 +8,6 @@ sealed interface NutritionGoalsIntent : UiIntent {
     data class ProteinChanged(val value: String) : NutritionGoalsIntent
     data class FatChanged(val value: String) : NutritionGoalsIntent
     data class CarbsChanged(val value: String) : NutritionGoalsIntent
+    data object ApplyRecommendationClicked : NutritionGoalsIntent
     data object SaveClicked : NutritionGoalsIntent
 }

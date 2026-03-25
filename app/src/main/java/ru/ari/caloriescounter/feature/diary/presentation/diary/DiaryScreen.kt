@@ -80,7 +80,10 @@ fun DiaryScreen(
                 label = { Text(text = stringResource(R.string.diary_add_meal_label)) },
                 singleLine = true,
                 trailingIcon = {
-                    TextButton(onClick = onAddMealClick) {
+                    TextButton(
+                        onClick = onAddMealClick,
+                        enabled = state.newMealTitleInput.trim().isNotEmpty(),
+                    ) {
                         Text(text = stringResource(R.string.diary_add_meal_action))
                     }
                 },

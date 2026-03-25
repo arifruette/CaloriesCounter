@@ -79,7 +79,8 @@ class DiaryRepositoryImpl @Inject constructor(
         val dayDate = date.toString()
         ensureDefaultMealSlots(dayDate)
         val nextSortOrder = dayMealSlotDao.maxSortOrder(dayDate) + 1
-        val normalizedTitle = title.trim().ifBlank { CUSTOM_MEAL_FALLBACK_TITLE }
+        val normalizedTitle = title.trim()
+        if (normalizedTitle.isBlank()) return
         dayMealSlotDao.insertSlot(
             DayMealSlotEntity(
                 dayDate = dayDate,
@@ -220,7 +221,6 @@ class DiaryRepositoryImpl @Inject constructor(
 }
 
 private const val CUSTOM_MEAL_FALLBACK_TITLE = "Прием пищи"
-
 private fun String.toDisplayMealTitle(): String = when (lowercase()) {
     "breakfast" -> "Завтрак"
     "lunch" -> "Обед"
